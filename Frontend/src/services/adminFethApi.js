@@ -55,6 +55,15 @@ const adminFetchApi = adminApi.injectEndpoints({
       }),
       invalidatesTags: ["getCategory"],
     }),
+    // mutation for update Category
+    updateCategory: builder.mutation({
+      query:credentials => ({
+        url:'/updateCategory',
+        method:"PUT",
+        body:credentials
+      }),
+      invalidatesTags: ["getCategory"]
+    })
   }),
   overrideExisting: false,
 });
@@ -66,5 +75,6 @@ export const {
   useUpdateUserMutation,
   useAddCategoryMutation,
   useGetCategoriesQuery,
-  useUpdateCategoryStatusMutation
+  useUpdateCategoryStatusMutation,
+  useUpdateCategoryMutation
 } = adminFetchApi;

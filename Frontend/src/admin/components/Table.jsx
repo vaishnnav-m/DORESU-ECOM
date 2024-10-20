@@ -3,9 +3,7 @@ function Table({
   pageName,
   data,
   columns,
-  handleStatus,
-  setUpdateStatus,
-  updateStatus,
+  buttonConfigs
 }) {
   return (
     <table className="min-w-full text-left divide-y divide-gray-200 bg-white rounded-2xl overflow-hidden">
@@ -35,66 +33,39 @@ function Table({
         {/*  */}
 
         {data ? (
-          data.map((user) => {
+          data.map((row) => {
             return (
-              <tr key={user._id}>
+              <tr key={row._id}>
                 {columns.map((col, index) => (
                   <td key={index} className="px-6 py-4 whitespace-nowrap">
-                    {user[col]}
+                    {row[col]}
                   </td>
                 ))}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {user.isActive ? "Active" : "Not Active"}
-                </td>
-                <td className="px-10 py-4 whitespace-nowrap relative">
-                  {" "}
-                  <button
-                    onClick={() => setUpdateStatus(user)}
-                    className="text-[30px] text-green-600 group"
-                  >
-                    <i
-                      className={`fas ${
-                        user.isActive ? "fa-toggle-on" : "fa-toggle-off"
-                      }`}
-                    ></i>
-                    <span className="bg-[#bdbdbd] p-1 text-[10px] absolute z-10 translate-x-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all ease-in">
-                      {user.isActive ? "Active" : "Not Active"}
-                    </span>
-                  </button>
-                </td>
+                {buttonConfigs.map((button, index) => (
+                  <td key={index} className="px-8 py-4 whitespace-nowrap">
+                    <button
+                      
+                      onClick={() => button.action(row)}
+                      className={`group ${button.styles}`} 
+                    >
+                      {button.icon(row.isActive)}
+                      <span className="bg-[#bdbdbd] p-1 text-[10px] absolute z-10 translate-x-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all ease-in">
+                        {button.label}
+                      </span>
+                    </button>
+                  </td>
+                ))}
               </tr>
             );
           })
         ) : (
           <tr>
             <td colSpan="4" className="px-6 py-4 whitespace-nowrap text-center">
-              No users
+              No rows
             </td>
           </tr>
         )}
       </tbody>
-      {updateStatus && (
-        <div className="absolute left-1/2 top-1/2 min-w-[700px] min-h-[200px] pt-5 flex flex-col justify-between text-[20px] font-semibold border border-[#d3d3d3] bg-[#f0f0f0] -translate-x-[50%]">
-          <span className="px-4 ">
-            Are you sure to {updateStatus.isActive ? "block" : "unblock"} the
-            user ?
-          </span>
-          <div className="flex w-full bg-[#e9e9e9] justify-end py-3 border border-t- gap-5">
-            <button
-              className="text-[20px] font-medium border border-[#d3d3d3] px-5 py-1"
-              onClick={() => setUpdateStatus(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="text-[20px] font-medium bg-red-600 px-5 py-1"
-              onClick={() => setUpdateStatus(!handleStatus(updateStatus._id))}
-            >
-              Ok
-            </button>
-          </div>
-        </div>
-      )}
     </table>
   );
 }

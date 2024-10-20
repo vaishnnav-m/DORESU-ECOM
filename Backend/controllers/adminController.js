@@ -45,7 +45,6 @@ const adminLogin = async (req, res) => {
   res.json({ message: "Login succesful", accessToken });
 };
 
-
 // controller for refresh accesstoken
 const refreshToken = (req, res) => {
   const cookies = req.cookies;
@@ -169,9 +168,41 @@ const updateCategoryStatus = async (req,res) => {
       return res.status(404).json({ message: "Category not found" });
     }  
     
-    await Category.findByIdAndUpdate(categoryId,{isActive:!userData.isActive});
+    await Category.findByIdAndUpdate(categoryId,{isActive:!categoryData.isActive});
     res.json({ message: "Category updated successfully" });
     
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message:"Internal server error"});
+  }
+}
+
+const updateCategory = async (req,res) => {
+  if(!req.user.isAdmin)
+    return res.status(403).json({message:"You have no permission"});
+  try {
+
+    const {_id:categoryId,categoryName,description} = req.body;
+    const categoryData = await Category.findById(categoryId);
+  
+    if (!categoryData) {
+      return res.status(404).json({ message: "Category not found" });
+    } 
+
+    if(categoryName !== categoryData.categoryName){
+      const exists = await Category.findOne({categoryName})
+      if(exists)
+        return res.status(409).json({message:"Category already exists"});
+    }
+
+    await Category.findByIdAndUpdate(categoryId,{
+      $set:{
+        categoryName,
+        description
+      }
+    });
+    
+    res.json({message:"Updated succesfully"});
   } catch (error) {
     console.log(error);
     res.status(500).json({message:"Internal server error"});
@@ -185,5 +216,6 @@ module.exports = {
   updateUserStatus,
   addCategory,
   getCategories,
-  updateCategoryStatus
+  updateCategoryStatus,
+  updateCategory
 };

@@ -6,17 +6,25 @@ import { useGetUsersQuery, useUpdateUserMutation } from "../../services/adminFet
 import Table from "../components/Table";
 
 function AdminUsers() {
-  const [updateStatus, setUpdateStatus] = useState(false);
-  const { data, isSuccess, isLoading, isError, error } = useGetUsersQuery();
+  const { data, isSuccess} = useGetUsersQuery();
   const headings = [
     "User Id",
     "User Name",
     " Phone",
     " Email",
     "IsActive",
-    "Update",
   ];
   const columns = ["_id", "firstName", "phone", "email"];
+  const buttonConfigs = [
+    {
+      label: "Toggle",
+      action: handleBlock,
+      styles:"text-green-600 text-[30px]",
+      icon: (isActive) => (
+        <i className={`fas ${isActive ? "fa-toggle-on" : "fa-toggle-off"}`}></i>
+      ),
+    }
+  ];
 
   const [updateUser] = useUpdateUserMutation();
 
@@ -51,9 +59,7 @@ function AdminUsers() {
             headings={headings}
             data={isSuccess && data}
             columns={columns}
-            handleBlock={handleBlock}
-            setUpdateStatus={setUpdateStatus}
-            updateStatus={updateStatus}
+            buttonConfigs={buttonConfigs}
           />
         </div>
       </main>

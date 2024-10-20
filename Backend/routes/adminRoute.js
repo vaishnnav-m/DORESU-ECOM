@@ -17,4 +17,6 @@ admin_route.get('/getCategories',verifyToken,adminContrller.getCategories);
 
 admin_route.put('/updateCategoryStatus',verifyToken,adminContrller.updateCategoryStatus);
 
+admin_route.put('/updateCategory',verifyToken,adminContrller.updateCategory);
+
 module.exports = admin_route;
