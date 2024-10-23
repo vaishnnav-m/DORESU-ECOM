@@ -63,7 +63,15 @@ const adminFetchApi = adminApi.injectEndpoints({
         body:credentials
       }),
       invalidatesTags: ["getCategory"]
-    })
+    }),
+    // mutation to add product
+    addProduct:builder.mutation({
+      query:credentials => ({
+        url:'/addProduct',
+        method:'POST',
+        body:credentials,
+      })
+    }),
   }),
   overrideExisting: false,
 });
@@ -76,5 +84,6 @@ export const {
   useAddCategoryMutation,
   useGetCategoriesQuery,
   useUpdateCategoryStatusMutation,
-  useUpdateCategoryMutation
+  useUpdateCategoryMutation,
+  useAddProductMutation
 } = adminFetchApi;

@@ -9,8 +9,7 @@ import {
 
 function OtpForm() {
   const [otp, setOtp] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const { userId } = useParams();
   const [timer, setTimer] = useState(59);
   const navigate = useNavigate();
@@ -47,16 +46,15 @@ function OtpForm() {
     if (!otp || otp.length !== 6) {
       setError("OTP must be 6 digits");
       return;
-    } else {
-      setTimer(0);
-      setError("");
     }
     try {
       const response = await verifyOtp({ userId, otp }).unwrap();
       if (response && response.accessToken) {
-        setOtp("");
-        setError("");
-        dispatch(setCredentials(response.accessToken));
+        if(response.status === 200){
+          setOtp("");
+          setError("");
+          dispatch(setCredentials(response.accessToken));
+        }
         return navigate("/");
       }
     } catch (error) {
@@ -66,8 +64,8 @@ function OtpForm() {
 
   const handleResendOtp = async () => {
     try {
+      setError("");
       await resendOtp({ userId }).unwrap();
-      setError(false);
       setTimer(59);
     } catch (error) {
       setError(error.response.data.message);
@@ -81,7 +79,10 @@ function OtpForm() {
           OTP
         </span>
         <input
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={(e) =>{
+            setError("") 
+            setOtp(e.target.value)
+          }}
           value={otp}
           name="text"
           aria-autocomplete="false"

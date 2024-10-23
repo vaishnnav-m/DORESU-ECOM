@@ -1,8 +1,10 @@
 import React from "react";
 import Header from "../components/Header";
 import Aside from "../components/Aside";
+import { useNavigate } from "react-router-dom";
 
 function AdminProducts() {
+  const navigate = useNavigate();
   return (
     <div className="bg-[#E7E7E3] flex h-screen">
       <Aside />
@@ -23,7 +25,7 @@ function AdminProducts() {
                 <td colSpan="6" className="bg-white p-5 border-b">
                   <div className="w-full flex justify-between items-center text-[20px]">
                     <h2 className="font-bold">Products Management</h2>
-                    <i className="fa-solid fa-ellipsis-vertical"></i>
+                    <button onClick={() => navigate('/admin/addProducts')} className="bg-black text-white px-3 py-2 rounded-lg overflow-hidden">Add Product <i className="fas fa-plus text-[18px] ml-2"></i></button>
                   </div>
                 </td>
               </tr>

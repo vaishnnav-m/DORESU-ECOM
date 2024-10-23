@@ -19,6 +19,9 @@ import AdminPublicRoutes from "./admin/components/AdminPublicRoutes";
 import { useAdminRefreshTokenQuery } from "./services/adminFethApi";
 import AdminAddCatagories from "./admin/pages/AdminAddCatagories";
 import AdminCatagories from "./admin/pages/AdminCatagories";
+import AdminOffers from "./admin/pages/AdminOffers";
+import AdminCoupons from "./admin/pages/AdminCoupons";
+import AdminOrderList from "./admin/pages/AdminOrderList";
 
 function App() {
   const dispatch = useDispatch();
@@ -89,7 +92,10 @@ function App() {
           <AdminProducts />
         </AdminProtetedRoutes>
           } />
-        <Route path="/admin/addProducts" element={<AdminAddProduct />} />
+        <Route path="/admin/addProducts" element={
+          <AdminProtetedRoutes>
+          <AdminAddProduct />
+        </AdminProtetedRoutes>} />
         <Route path="/admin/users" element={
           <AdminProtetedRoutes>
           <AdminUsers />
@@ -103,6 +109,21 @@ function App() {
         <Route path="/admin/catagories" element={
           <AdminProtetedRoutes>
           <AdminCatagories />
+        </AdminProtetedRoutes>
+        } />
+        <Route path="/admin/offers" element={
+          <AdminProtetedRoutes>
+          <AdminOffers />
+        </AdminProtetedRoutes>
+        } />
+        <Route path="/admin/cupons" element={
+          <AdminProtetedRoutes>
+          <AdminCoupons />
+        </AdminProtetedRoutes>
+        } />
+        <Route path="/admin/orders" element={
+          <AdminProtetedRoutes>
+          <AdminOrderList />
         </AdminProtetedRoutes>
         } />
       </Routes>

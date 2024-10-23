@@ -6,7 +6,7 @@ function Aside() {
   return (
     <aside className="w-[260px] min-h-full py-9 px-9 flex flex-col items-center gap-9 bg-white">
       <div className="w-[160px]">
-        <img className="w-full" src={logo} alt="" />
+        <img className="w-full pointer-events-none" src={logo} alt="" />
       </div>
       <nav className="w-full">
         <ul className="uppercase text-[14px] tracking-wide text-[#232321] font-semibold *:py-[12px] *:px-[17px] *:rounded-lg transition-all ease-in duration-300">
@@ -38,7 +38,7 @@ function Aside() {
               location.pathname === "/admin/orders" ? "bg-black text-white" : ""
             }
           >
-            <Link to="/adim/orders">Order List</Link>
+            <Link to="/admin/orders">Order List</Link>
           </li>
           <li
             className={

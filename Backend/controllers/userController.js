@@ -111,7 +111,7 @@ const verifyOtp = async (req, res) => {
     });
 
     // sending acess token
-    res.json({ message: "Login succesful", accessToken });
+    res.json({status:200, message: "Login succesful", accessToken });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -123,11 +123,12 @@ const verifyOtp = async (req, res) => {
 // user resend OTP controller
 const resendOtp = async (req, res) => {
   try {
-    const user = await User.findById(req.body.userId);
+    const {userId} = req.body;
+    const user = await User.findById(userId);
 
     if (!user) return res.status(404).json({ message: "Cannot find the user" });
 
-    const otpRecord = await Otp.findOne({ userId: req.body.userId });
+    const otpRecord = await Otp.findOne({ userId });
     if (otpRecord)
       return res.status(400).json({ message: "otp is still valid" });
 
@@ -151,13 +152,14 @@ const resendOtp = async (req, res) => {
 // user login controller
 const postLogin = async (req, res) => {
   try {
-    const userData = await User.findOne({ email: req.body.email });
+    const {email,password} = req.body;
+    const userData = await User.findOne({ email: email });
 
     if (!userData)
       return res.status(401).json({ message: "User details is invalid" });
 
     const isPasswordMatch = await bcrypt.compare(
-      req.body.password,
+      password,
       userData.password
     );
 

@@ -1,22 +1,27 @@
 const express = require("express");
 const admin_route = express.Router();
-const adminContrller = require("../controllers/adminController");
+const adminController = require("../controllers/adminController");
+const categoryController = require('../controllers/categorieController')
+const productController = require('../controllers/productController');
 const verifyToken = require('../middlewares/tokenCheck')
+const upload = require('../middlewares/imageUpload')
 
-admin_route.post("/login", adminContrller.adminLogin);
+admin_route.post("/login", adminController.adminLogin);
 
-admin_route.get('/refresh',adminContrller.refreshToken);
+admin_route.get('/refresh',adminController.refreshToken);
 
-admin_route.get('/getUsers',verifyToken,adminContrller.getUsers);
+admin_route.get('/getUsers',verifyToken,adminController.getUsers);
 
-admin_route.put('/updateStatus',verifyToken,adminContrller.updateUserStatus);
+admin_route.put('/updateStatus',verifyToken,adminController.updateUserStatus);
 
-admin_route.post('/addCategory',verifyToken,adminContrller.addCategory);
+admin_route.post('/addCategory',verifyToken,categoryController.addCategory);
 
-admin_route.get('/getCategories',verifyToken,adminContrller.getCategories);
+admin_route.get('/getCategories',verifyToken,categoryController.getCategories);
 
-admin_route.put('/updateCategoryStatus',verifyToken,adminContrller.updateCategoryStatus);
+admin_route.put('/updateCategoryStatus',verifyToken,categoryController.updateCategoryStatus);
 
-admin_route.put('/updateCategory',verifyToken,adminContrller.updateCategory);
+admin_route.put('/updateCategory',verifyToken,categoryController.updateCategory);
+
+admin_route.post('/addProduct',verifyToken,upload.array('file',5),productController.addProduct);
 
 module.exports = admin_route;
