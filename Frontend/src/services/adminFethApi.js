@@ -72,6 +72,27 @@ const adminFetchApi = adminApi.injectEndpoints({
         body:credentials,
       })
     }),
+    // query to get products
+    getProduts:builder.query({
+      query:() => ({
+        url:'/getProducts'
+      }),
+      providesTags: ["getProducts"]
+    }),
+    // mutation to updateStatus of Product
+    updateProductStatus:builder.mutation({
+      query:credentials => ({
+        url:'/products/updateStatus',
+        method:'PATCH',
+        body:credentials
+      }),
+      invalidatesTags:['getProducts']
+    }),
+    getProduct:builder.query({
+      query:(id) => ({
+        url:`/getProduct/${id}`
+      })
+    })
   }),
   overrideExisting: false,
 });
@@ -85,5 +106,8 @@ export const {
   useGetCategoriesQuery,
   useUpdateCategoryStatusMutation,
   useUpdateCategoryMutation,
-  useAddProductMutation
+  useAddProductMutation,
+  useGetProdutsQuery,
+  useUpdateProductStatusMutation,
+  useGetProductQuery
 } = adminFetchApi;

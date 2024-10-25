@@ -11,7 +11,7 @@ const productSchema = mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.ObjectId,
-    ref:'categories',
+    ref: "category",
     required: true,
   },
   size: {
@@ -30,6 +30,10 @@ const productSchema = mongoose.Schema({
     type: Array,
     required: true,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
-module.exports = mongoose.model('products',productSchema);
+module.exports = mongoose.model("products", productSchema);

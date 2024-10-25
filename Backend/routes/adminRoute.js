@@ -24,4 +24,10 @@ admin_route.put('/updateCategory',verifyToken,categoryController.updateCategory)
 
 admin_route.post('/addProduct',verifyToken,upload.array('file',5),productController.addProduct);
 
+admin_route.get('/getProducts',verifyToken,productController.getProducts);
+
+admin_route.patch('/products/updateStatus',verifyToken,productController.updateStatus);
+
+admin_route.get('/getProduct/:productId',productController.getProduct);
+
 module.exports = admin_route;

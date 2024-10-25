@@ -11,5 +11,5 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/api/admin/getUsers
+GET http://localhost:3000/api/admin/getProducts
 Content-Type: application/json

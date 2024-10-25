@@ -1,104 +1,91 @@
 import React from "react";
 import Header from "../components/Header";
 import Aside from "../components/Aside";
+import Table from "../components/Table";
 import { useNavigate } from "react-router-dom";
+import {
+  useGetProdutsQuery,
+  useUpdateProductStatusMutation,
+} from "../../services/adminFethApi";
+import { toast } from "react-toastify";
 
 function AdminProducts() {
   const navigate = useNavigate();
+  const [
+    updateProductStatus,
+    { isSuccess: statusSuccess, isError: statusError },
+  ] = useUpdateProductStatusMutation();
+  const { data, isSuccess } = useGetProdutsQuery();
+
+  const headings = [
+    "Images",
+    "Poduct Name",
+    "Description",
+    "Stock",
+    "Price",
+    "Availale",
+    "update",
+  ];
+  const columns = ["productName", "description", "stock", "price"];
+  const mainButton = {
+    name: "Add Product",
+    action: () => {
+      navigate("/admin/addProducts");
+    },
+  };
+
+  const buttonConfigs = [
+    {
+      label: "Toggle",
+      action: handleStatus,
+      styles: "text-green-600 text-[30px]",
+      icon: (isActive) => (
+        <i className={`fas ${isActive ? "fa-toggle-on" : "fa-toggle-off"}`}></i>
+      ),
+    },
+    {
+      label: "Edit",
+      action: handleEdit,
+      styles: "text-[25px]",
+      icon: () => <i className="fas  fa-edit"></i>,
+    },
+  ];
+  // function to handleStatus
+  async function handleStatus({ _id }) {
+    try {
+      const response = await updateProductStatus({ productId: _id });
+      if (response) {
+        toast.success("Product Updated !", {
+          position: "top-right",
+          theme:"dark",
+        });
+        return true;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // function to handle edit
+  function handleEdit(product) {
+     navigate(`/admin/editProduct/${product._id}`);
+  }
+
   return (
     <div className="bg-[#E7E7E3] flex h-screen">
       <Aside />
       <main className="w-full">
         <Header />
-      <div className="p-5">
-          <div>
-            <h2 className="text-[24px] font-bold">Products</h2>
-            <span className="text-[16px]">
-             Admin <i className="fa-solid fa-angle-right text-sm"></i> Products
-            </span>
-          </div>
-        </div>
         <div className="p-10">
-          <table className="min-w-full text-left divide-y divide-gray-200 bg-white rounded-2xl overflow-hidden">
-            <thead>
-              <tr>
-                <td colSpan="6" className="bg-white p-5 border-b">
-                  <div className="w-full flex justify-between items-center text-[20px]">
-                    <h2 className="font-bold">Products Management</h2>
-                    <button onClick={() => navigate('/admin/addProducts')} className="bg-black text-white px-3 py-2 rounded-lg overflow-hidden">Add Product <i className="fas fa-plus text-[18px] ml-2"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Poduct Name
-                </th>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Product Id
-                </th>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Availale
-                </th>
-                <th className="px-6 py-3 text-[16px] font-semibold text-gray-500 uppercase tracking-wider">
-                  Update
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200  text-[14px] font-semibold">
-              {/* <tr>
-                 <td colSpan="4" className="px-6 py-4 whitespace-nowrap text-center">
-                   No users
-                   </td>
-               </tr> */}
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">name</td>
-                <td className="px-6 py-4 whitespace-nowrap">#12345</td>
-                <td className="px-6 py-4 whitespace-nowrap">0</td>
-                <td className="px-6 py-4">₹200.00</td>
-                <td className="px-6 py-4 whitespace-nowrap text-2xl">
-                  <i className="fa-solid fa-toggle-on"></i>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-xl flex gap-5">
-                  <i className="fa-solid fa-pen-to-square"></i>
-                  <i className="fa-solid fa-trash"></i>
-                </td>
-              </tr>
-
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">name</td>
-                <td className="px-6 py-4 whitespace-nowrap">#12345</td>
-                <td className="px-6 py-4 whitespace-nowrap">100</td>
-                <td className="px-6 py-4 items-center ">₹200.00</td>
-                <td className="px-6 py-4 whitespace-nowrap text-2xl">
-                  <i className="fa-solid fa-toggle-on"></i>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-xl flex gap-5">
-                  <i className="fa-solid fa-pen-to-square"></i>
-                  <i className="fa-solid fa-trash"></i>
-                </td>
-              </tr>
-
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">name</td>
-                <td className="px-6 py-4 whitespace-nowrap">#12345</td>
-                <td className="px-6 py-4 whitespace-nowrap">10</td>
-                <td className="px-6 py-4 items-center ">₹200.00</td>
-                <td className="px-6 py-4 whitespace-nowrap text-2xl">
-                  <i className="fa-solid fa-toggle-on"></i>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap flex gap-5 text-xl">
-                  <i className="fa-solid fa-pen-to-square"></i>
-                  <i className="fa-solid fa-trash"></i>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <Table
+              pageName={"Products"}
+              data={data?.data}
+              headings={headings}
+              columns={columns}
+              buttonConfigs={buttonConfigs}
+              imageConfigs={true}
+              mainButton={mainButton}
+            />
         </div>
       </main>
     </div>

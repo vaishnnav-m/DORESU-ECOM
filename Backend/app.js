@@ -2,7 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require('cors');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const path = require('path')
 
 // enabling cors
 const corsOptions = {
@@ -11,6 +12,8 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
+// serve static files
+app.use('/uploads/products', express.static(path.join(__dirname, 'public/uploads/products')));
 
 const connectDB = require("./config/db");
 const user_route = require("./routes/userRoute");

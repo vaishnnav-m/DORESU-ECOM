@@ -1,7 +1,10 @@
-import 'react-image-crop/dist/ReactCrop.css'
+import "react-image-crop/dist/ReactCrop.css";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useAddProductMutation, useGetCategoriesQuery } from "../../services/adminFethApi";
+import {
+  useAddProductMutation,
+  useGetCategoriesQuery,
+} from "../../services/adminFethApi";
 import ImageCroper from "./ImageCroper";
 import * as Yup from "yup";
 
@@ -24,7 +27,7 @@ function AddProductForm() {
         image: [...prev.image, ...acceptedFiles], // for formdata
       }));
 
-      setThumbnail((prev) => [...prev || [], ...imageUrls]); // to set thumbnail
+      setThumbnail((prev) => [...(prev || []), ...imageUrls]); // to set thumbnail
 
       if (profileImage === null)
         setProfileImage(URL.createObjectURL(acceptedFiles[0]));
@@ -48,7 +51,7 @@ function AddProductForm() {
 
   const [addProduct, { data, isSuccess, isLoading, isError, error }] =
     useAddProductMutation();
-  const {data:categoryData} = useGetCategoriesQuery();
+  const { data: categoryData } = useGetCategoriesQuery();
 
   // States
   const [formData, setFormData] = useState({
@@ -60,9 +63,9 @@ function AddProductForm() {
     price: "",
     image: [],
   });
-  const [modalOpen,setModalOpen] = useState(false);
-  const [selectedIndex,setSelectedIndex] = useState(null);
-  const [formError,setFormError] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [formError, setFormError] = useState({});
   // function to handdle form change
   function handleChange(e) {
     setFormData({
@@ -72,24 +75,28 @@ function AddProductForm() {
   }
 
   // function to handle checkbox change
-  function handleCheckboxChange(e){
+  function handleCheckboxChange(e) {
     const { value, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      size: checked 
-        ? [...prev.size, value] 
-        : prev.size.filter((size) => size !== value) 
+      size: checked
+        ? [...prev.size, value]
+        : prev.size.filter((size) => size !== value),
     }));
   }
-  // validate schema 
+  // validate schema
   const validateSchema = Yup.object({
     productName: Yup.string().required("Product Name is Required"),
     description: Yup.string().required("Descritption is Required"),
     category: Yup.string().required("category is Required"),
-    size: Yup.array().min(1, "At least one size is required").required("Size is Required"),
+    size: Yup.array()
+      .min(1, "At least one size is required")
+      .required("Size is Required"),
     stock: Yup.string().required("Stock is Required"),
     price: Yup.string().required("Price is Required"),
-    image:Yup.array().min(3, "At least Three image is required").required("Image is Required")
+    image: Yup.array()
+      .min(3, "At least Three image is required")
+      .required("Image is Required"),
   });
 
   // function handle submit
@@ -108,18 +115,18 @@ function AddProductForm() {
         payload.append("file", file);
       });
       await addProduct(payload).unwrap();
-        setFormData({
-          productName: "",
-          description: "",
-          category: "",
-          size: [],
-          stock: "",
-          price: "",
-          image: [],
-        })
-        setFormError({})
-        setProfileImage(null);
-        setThumbnail([]);
+      setFormData({
+        productName: "",
+        description: "",
+        category: "",
+        size: [],
+        stock: "",
+        price: "",
+        image: [],
+      });
+      setFormError({});
+      setProfileImage(null);
+      setThumbnail([]);
     } catch (errors) {
       if (errors.inner) {
         const newErrors = {};
@@ -133,11 +140,10 @@ function AddProductForm() {
   }
 
   // function to handle Cancel
-  function handleCancel(){
-
-    setFormError({})
-    setThumbnail([])
-    setProfileImage(null)
+  function handleCancel() {
+    setFormError({});
+    setThumbnail([]);
+    setProfileImage(null);
     setFormData({
       productName: "",
       description: "",
@@ -146,15 +152,20 @@ function AddProductForm() {
       stock: "",
       price: "",
       image: [],
-    })
+    });
   }
 
+  // function to handle remove
+  function handleRemove(index) {
+    const filtered = thumbnail.filter((val, ind) => ind !== index);
+    setThumbnail(filtered);
+  }
 
   // function to set cropped images
   function setCropedImage(croppedFile) {
     const imageUrl = URL.createObjectURL(croppedFile);
     setProfileImage(imageUrl);
-  
+
     setFormData((prev) => {
       const updatedImages = [croppedFile];
       return { ...prev, image: updatedImages };
@@ -183,7 +194,7 @@ function AddProductForm() {
             onChange={handleChange}
             value={formData.productName}
           />
-           {formError.productName && (
+          {formError.productName && (
             <span className="text-red-600">{formError.productName}</span>
           )}
         </div>
@@ -211,12 +222,15 @@ function AddProductForm() {
               value={formData.category}
             >
               <option value="">Please select an option</option>
-              {
-                categoryData && categoryData.map((category) => <option key={category._id} value={category._id}>{category.categoryName}</option>)
-              }
+              {categoryData &&
+                categoryData.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.categoryName}
+                  </option>
+                ))}
             </select>
           </div>
-            {formError.category && (
+          {formError.category && (
             <span className="text-red-600">{formError.category}</span>
           )}
         </div>
@@ -224,43 +238,42 @@ function AddProductForm() {
           <h2>Size</h2>
 
           <div className="flex gap-3 px-5 py-2 text-[#5e5d61] font-semibold">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              value="small"
-              onChange={handleCheckboxChange}
-              checked={formData.size.includes("small")}
-            />
-            
-            Small
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              value="medium"
-              onChange={handleCheckboxChange}
-              checked={formData.size.includes("medium")}
-            />
-            Medium
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              value="large"
-              onChange={handleCheckboxChange}
-              checked={formData.size.includes("large")}
-            />
-            Large
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              value="extra large"
-              onChange={handleCheckboxChange}
-              checked={formData.size.includes("extra large")}
-            />
-            Extra Large
-          </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                value="small"
+                onChange={handleCheckboxChange}
+                checked={formData.size.includes("small")}
+              />
+              Small
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                value="medium"
+                onChange={handleCheckboxChange}
+                checked={formData.size.includes("medium")}
+              />
+              Medium
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                value="large"
+                onChange={handleCheckboxChange}
+                checked={formData.size.includes("large")}
+              />
+              Large
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                value="extra large"
+                onChange={handleCheckboxChange}
+                checked={formData.size.includes("extra large")}
+              />
+              Extra Large
+            </label>
           </div>
 
           {formError.size && (
@@ -278,7 +291,7 @@ function AddProductForm() {
             value={formData.stock}
           />
 
-            {formError.stock && (
+          {formError.stock && (
             <span className="text-red-600">{formError.stock}</span>
           )}
         </div>
@@ -300,26 +313,36 @@ function AddProductForm() {
       <div className="p-5 flex flex-col gap-5 relative">
         <div className="w-[428px] h-[428px] flex items-center bg-[#c8c8c8] rounded-2xl overflow-hidden">
           <img className="w-full" src={profileImage} alt="" />
-          <a onClick={() => setModalOpen(true)} className="text-[16px] absolute bg-[#c8c8c8] py-10 px-[5px] rounded-full top-1/5 left-2 text-black">
+          <a
+            onClick={() => setModalOpen(true)}
+            className="text-[16px] absolute bg-[#c8c8c8] py-10 px-[5px] rounded-full top-1/5 left-2 text-black"
+          >
             <i className="fas fa-pen-to-square "></i>
           </a>
         </div>
         <div className="flex gap-2">
-          {thumbnail && thumbnail.map((img, index) => (
-            <div
-              key={index}
-              className="w-[100px] h-[100px] flex items-center bg-[#c8c8c8] rounded-2xl overflow-hidden "
-            >
-              <img
-                src={img.url}
-                alt="image"
-                onClick={() => {
-                  setSelectedIndex(index)
-                  setProfileImage(img.url)
-                }}
-              />
-            </div>
-          ))}
+          {thumbnail &&
+            thumbnail.map((img, index) => (
+              <div
+                key={index}
+                className="w-[100px] h-[100px] flex items-center bg-[#c8c8c8] rounded-2xl overflow-hidden relative"
+              >
+                <a
+                  onClick={() => handleRemove(index)}
+                  className="absolute right-1 top-1 px-2 py-1 rounded-full text-[12px] bg-black text-white"
+                >
+                  <i className="fas fa-x"></i>
+                </a>
+                <img
+                  src={img.url}
+                  alt="image"
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    setProfileImage(img.url);
+                  }}
+                />
+              </div>
+            ))}
         </div>
         <div>
           <h2>Product Gallery</h2>
@@ -366,7 +389,13 @@ function AddProductForm() {
 
         {isSuccess && <span className="text-green-500">{data.message}</span>}
       </div>
-       {modalOpen && <ImageCroper updateProfile = {setCropedImage} imageSrc={profileImage} closeModal={() => setModalOpen(false)}/>}
+      {modalOpen && (
+        <ImageCroper
+          updateProfile={setCropedImage}
+          imageSrc={profileImage}
+          closeModal={() => setModalOpen(false)}
+        />
+      )}
     </form>
   );
 }

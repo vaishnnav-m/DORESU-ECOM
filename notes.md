@@ -6,7 +6,7 @@
 
 [] size based stock
 
-[] issue in add product
+[x] issue in add product
 
 [] edit product
 

@@ -10,7 +10,12 @@ import PublicRoute from "./user/components/PublicRoute";
 import { useEffect } from "react";
 import { useRefreshTokenQuery } from "./services/authApi";
 import { useDispatch } from "react-redux";
-import { adminLogOut, logOut, setAdminCredentials, setCredentials } from "./store/authSlice";
+import {
+  adminLogOut,
+  logOut,
+  setAdminCredentials,
+  setCredentials,
+} from "./store/authSlice";
 import { RotatingLines } from "react-loader-spinner";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminUsers from "./admin/pages/AdminUsers";
@@ -22,25 +27,30 @@ import AdminCatagories from "./admin/pages/AdminCatagories";
 import AdminOffers from "./admin/pages/AdminOffers";
 import AdminCoupons from "./admin/pages/AdminCoupons";
 import AdminOrderList from "./admin/pages/AdminOrderList";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ProductDetail from "./user/pages/ProductDetail";
+import ProtectedRoutes from "./user/components/ProtectedRoutes";
 
 function App() {
   const dispatch = useDispatch();
   const { data, error, isLoading } = useRefreshTokenQuery();
-  const {data:adminData,error:adminError,isLoading:adminIsLoading} = useAdminRefreshTokenQuery()
+  const {
+    data: adminData,
+    error: adminError,
+    isLoading: adminIsLoading,
+  } = useAdminRefreshTokenQuery();
   useEffect(() => {
     if (data) {
       dispatch(setCredentials(data));
     } else if (error) {
       dispatch(logOut());
     }
-    if(adminData)
-      dispatch(setAdminCredentials(adminData))
-    else if(adminError)
-      dispatch(adminLogOut())
+    if (adminData) dispatch(setAdminCredentials(adminData));
+    else if (adminError) dispatch(adminLogOut());
+  }, [data, adminData, adminError, error, dispatch]);
 
-  }, [data,adminData,adminError, error, dispatch]);
-
-  if (isLoading || adminIsLoading){
+  if (isLoading || adminIsLoading) {
     return (
       <div className="w-full min-h-screen flex justify-center items-center ">
         <RotatingLines
@@ -54,10 +64,12 @@ function App() {
           wrapperClass="stroke-black"
         />
       </div>
-    );}
+    );
+  }
 
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route
@@ -77,55 +89,113 @@ function App() {
             </PublicRoute>
           }
         />{" "}
-        <Route path="/admin/login" element={
-          <AdminPublicRoutes>
-            <AdminLogin />
-          </AdminPublicRoutes>
-          } />
-        <Route path="/admin" element={
-          <AdminProtetedRoutes>
-            <AdminDashboard />
-          </AdminProtetedRoutes>
-          } />
-        <Route path="/admin/products" element={
-          <AdminProtetedRoutes>
-          <AdminProducts />
-        </AdminProtetedRoutes>
-          } />
-        <Route path="/admin/addProducts" element={
-          <AdminProtetedRoutes>
-          <AdminAddProduct />
-        </AdminProtetedRoutes>} />
-        <Route path="/admin/users" element={
-          <AdminProtetedRoutes>
-          <AdminUsers />
-        </AdminProtetedRoutes>
-        } />
-        <Route path="/admin/addCatagories" element={
-          <AdminProtetedRoutes>
-          <AdminAddCatagories />
-        </AdminProtetedRoutes>
-        } />
-        <Route path="/admin/catagories" element={
-          <AdminProtetedRoutes>
-          <AdminCatagories />
-        </AdminProtetedRoutes>
-        } />
-        <Route path="/admin/offers" element={
-          <AdminProtetedRoutes>
-          <AdminOffers />
-        </AdminProtetedRoutes>
-        } />
-        <Route path="/admin/cupons" element={
-          <AdminProtetedRoutes>
-          <AdminCoupons />
-        </AdminProtetedRoutes>
-        } />
-        <Route path="/admin/orders" element={
-          <AdminProtetedRoutes>
-          <AdminOrderList />
-        </AdminProtetedRoutes>
-        } />
+        <Route
+          path="/productDetail/:productId"
+          element={
+            <ProtectedRoutes>
+              <ProductDetail />
+            </ProtectedRoutes>
+          }
+        />
+        {/* admin login */}
+        <Route
+          path="/admin/login"
+          element={
+            <AdminPublicRoutes>
+              <AdminLogin />
+            </AdminPublicRoutes>
+          }
+        />
+        {/* admin dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <AdminProtetedRoutes>
+              <AdminDashboard />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin products */}
+        <Route
+          path="/admin/products"
+          element={
+            <AdminProtetedRoutes>
+              <AdminProducts />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin add products */}
+        <Route
+          path="/admin/addProducts"
+          element={
+            <AdminProtetedRoutes>
+              <AdminAddProduct />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin edit product */}
+        <Route
+          path="/admin/editProduct/:productId"
+          element={
+            <AdminProtetedRoutes>
+              <AdminAddProduct />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin users */}
+        <Route
+          path="/admin/users"
+          element={
+            <AdminProtetedRoutes>
+              <AdminUsers />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin add categories */}
+        <Route
+          path="/admin/addCatagories"
+          element={
+            <AdminProtetedRoutes>
+              <AdminAddCatagories />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin categories */}
+        <Route
+          path="/admin/catagories"
+          element={
+            <AdminProtetedRoutes>
+              <AdminCatagories />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin offers */}
+        <Route
+          path="/admin/offers"
+          element={
+            <AdminProtetedRoutes>
+              <AdminOffers />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin cupons */}
+        <Route
+          path="/admin/cupons"
+          element={
+            <AdminProtetedRoutes>
+              <AdminCoupons />
+            </AdminProtetedRoutes>
+          }
+        />
+        {/* admin dashboard */}
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminProtetedRoutes>
+              <AdminOrderList />
+            </AdminProtetedRoutes>
+          }
+        />
       </Routes>
     </Router>
   );

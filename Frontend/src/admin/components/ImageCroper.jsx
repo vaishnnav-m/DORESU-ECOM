@@ -9,7 +9,6 @@ function ImageCroper({ imageSrc, closeModal, updateProfile }) {
   const [crop, setCrop] = useState({ unit: "px", width: 0, height: 0, x: 0, y: 0 });
   const imageRef = useRef(null);
   const canvasRef = useRef(null);
-
   const onImageLoad = (e) => {
     const { width, height } = e.target;
     const crop = makeAspectCrop(
@@ -51,12 +50,12 @@ function ImageCroper({ imageSrc, closeModal, updateProfile }) {
           aspect={ASPECT_RATIO}
           minWidth={MIN_DIMENSION}
           >
-            <div className="w-[1000px] h-[70vh] rounded-xl overflow-hidden">
+            <div className="w-[1000px] h-[70vh] rounded-xl">
               <img
                 ref={imageRef}
                 src={imageSrc}
                 alt="Crop Preview"
-                style={{ minWidth: "100%",minHeight:"100%"}}
+                style={{ width: "100%",height:"100%",objectFit:'contain'}}
                 onLoad={onImageLoad}
               />
             </div>

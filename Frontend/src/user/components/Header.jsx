@@ -43,7 +43,7 @@ function Header() {
         <div>
           <ul className="flex gap-10 text-[#6e6e6e] text-[18px] font-sans font-semibold">
             <li className="hover:scale-110">
-              <Link>Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li className="hover:scale-110">
               <Link>All Products</Link>
