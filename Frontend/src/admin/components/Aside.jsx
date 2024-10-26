@@ -4,7 +4,7 @@ import logo from "../../assets/Doresu.svg";
 function Aside() {
   const location = useLocation();
   return (
-    <aside className="w-[260px] min-h-full py-9 px-9 flex flex-col items-center gap-9 bg-white">
+    <aside className="w-[260px] min-h-full z-50 fixed py-9 px-9 flex flex-col items-center gap-9 bg-white">
       <div className="w-[160px]">
         <img className="w-full pointer-events-none" src={logo} alt="" />
       </div>

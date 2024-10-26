@@ -1,8 +1,9 @@
-import React from "react";
+import AddProductForm from "../components/AddProductForm";
+import EditProductForm from "../components/AdminEditProductForm";
 import Aside from "../components/Aside";
 import Header from "../components/Header";
 
-function AdminAddCatagories() {
+function AdminEditProduct() {
   return (
     <div className="bg-[#E7E7E3] flex min-h-screen">
       <Aside />
@@ -12,12 +13,12 @@ function AdminAddCatagories() {
           <div>
             <h2 className="text-[24px] font-bold">Add Product</h2>
             <span className="text-[16px]">
-              Admin <i className="fa-solid fa-angle-right text-sm"></i> Products
+              Home <i className="fa-solid fa-angle-right text-sm"></i> Products
             </span>
           </div>
 
-          <div className="p-10 h-full flex justify-center items-center">
-            
+          <div className="p-10">
+            <EditProductForm/>
           </div>
         </div>
       </main>
@@ -25,4 +26,4 @@ function AdminAddCatagories() {
   );
 }
 
-export default AdminAddCatagories;
+export default AdminEditProduct;

@@ -10,16 +10,18 @@
 
 [] edit product
 
-[] delete product
+[x] delete product
 
 [] product listing in user side
 
 [] avoid alert and use proper modals
 
-[] object destruction
+[x] object destruction
 
 [] create mapper function
 
-[] generic common response model
+[x] generic common response model
 
-[] Enum for status code
+[x] Enum for status code
+
+[] varient adding

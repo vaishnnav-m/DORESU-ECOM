@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
 import Aside from "../components/Aside";
 import Table from "../components/Table";
@@ -8,15 +8,16 @@ import {
   useUpdateProductStatusMutation,
 } from "../../services/adminFethApi";
 import { toast } from "react-toastify";
+import ConfirmModal from "../components/ConfirmModal";
 
 function AdminProducts() {
   const navigate = useNavigate();
-  const [
-    updateProductStatus,
-    { isSuccess: statusSuccess, isError: statusError },
-  ] = useUpdateProductStatusMutation();
-  const { data, isSuccess } = useGetProdutsQuery();
-
+  // hooks for mutation and query
+  const [updateProductStatus] = useUpdateProductStatusMutation();
+  const { data } = useGetProdutsQuery();
+  // states
+  const [modal, setModal] = useState(false);
+  // for table
   const headings = [
     "Images",
     "Poduct Name",
@@ -33,11 +34,57 @@ function AdminProducts() {
       navigate("/admin/addProducts");
     },
   };
+  // for modal
+  const [modalHeading, setModalHeading] = useState("");
+  const [modalText, setModalText] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState({id:null,isActive:null});
+  const [buttonConfigsModal, setButtonCofigsModal] = useState([]);
+
+  // function to handle modal
+  const handleModal = ({ _id, isActive }) => {
+    setSelectedProduct({ id: _id, isActive: isActive });
+    
+    if (isActive) {
+      setModalHeading("Delete Product");
+      setModalText("Are you sure to deactivate this product? If you deactivate it, users can't see the product.");
+      setButtonCofigsModal([
+        {
+          name: "Cancel",
+          action: () => setModal(false),
+          styles: "px-4 py-2 bg-gray-200 text-sm mr-4 rounded-lg",
+        },
+        {
+          name: "Continue",
+          action: () => handleStatus(_id),
+          styles: "px-4 py-2 text-sm mr-4 rounded-lg bg-red-500",
+        },
+      ]);
+    } else {
+      setModalHeading("Activate Product");
+      setModalText("Are you sure to activate this product? If you activate it, users can see the product.");
+      setButtonCofigsModal([
+        {
+          name: "Cancel",
+          action: () => setModal(false),
+          styles: "px-4 py-2 bg-gray-200 text-sm mr-4 rounded-lg",
+        },
+        {
+          name: "Continue",
+          action: () => handleStatus(_id),
+          styles: "px-4 py-2 text-sm mr-4 rounded-lg bg-green-500",
+        },
+      ]);
+    }
+  
+    setModal(true);
+  };
+
+  const mainIcon = selectedProduct.isActive ? <i className="fas fa-x text-3xl text-red-500"></i>:<i className="fas fa-check text-3xl text-green-500"></i>
 
   const buttonConfigs = [
     {
       label: "Toggle",
-      action: handleStatus,
+      action: handleModal,
       styles: "text-green-600 text-[30px]",
       icon: (isActive) => (
         <i className={`fas ${isActive ? "fa-toggle-on" : "fa-toggle-off"}`}></i>
@@ -50,44 +97,66 @@ function AdminProducts() {
       icon: () => <i className="fas  fa-edit"></i>,
     },
   ];
+
   // function to handleStatus
-  async function handleStatus({ _id }) {
+  async function handleStatus(_id) {
     try {
-      const response = await updateProductStatus({ productId: _id });
+      const response = await updateProductStatus({ productId: _id }).unwrap();
       if (response) {
+        setModal(false);
         toast.success("Product Updated !", {
           position: "top-right",
-          theme:"dark",
+          theme: "dark",
         });
         return true;
       }
     } catch (error) {
+      toast.error("Product update failed.", {
+        position: "top-right",
+        theme: "dark",
+      });
       console.log(error);
     }
   }
 
   // function to handle edit
   function handleEdit(product) {
-     navigate(`/admin/editProduct/${product._id}`);
+    navigate(`/admin/editProduct/${product._id}`);
   }
 
   return (
-    <div className="bg-[#E7E7E3] flex h-screen">
+    <div className="bg-[#E7E7E3] flex min-h-screen">
       <Aside />
-      <main className="w-full">
+      <main className="w-full pl-[260px]">
         <Header />
-        <div className="p-10">
-            <Table
-              pageName={"Products"}
-              data={data?.data}
-              headings={headings}
-              columns={columns}
-              buttonConfigs={buttonConfigs}
-              imageConfigs={true}
-              mainButton={mainButton}
-            />
+        <div className="p-5 pt-[106px]">
+          <div>
+            <h2 className="text-[24px] font-bold">Products</h2>
+            <span className="text-[16px]">
+              Admin <i className="fa-solid fa-angle-right text-sm"></i> Products
+            </span>
+          </div>
+        </div>
+        <div className="p-10 pt-[136px]">
+          <Table
+            pageName={"Product Management"}
+            data={data?.data}
+            headings={headings}
+            columns={columns}
+            buttonConfigs={buttonConfigs}
+            imageConfigs={true}
+            mainButton={mainButton}
+          />
         </div>
       </main>
+      {modal && (
+        <ConfirmModal
+          text={modalText}
+          heading={modalHeading}
+          buttonConfigs={buttonConfigsModal}
+          mainIcon={mainIcon}
+        />
+      )}
     </div>
   );
 }

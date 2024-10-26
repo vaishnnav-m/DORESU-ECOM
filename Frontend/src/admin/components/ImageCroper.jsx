@@ -55,6 +55,7 @@ function ImageCroper({ imageSrc, closeModal, updateProfile }) {
                 ref={imageRef}
                 src={imageSrc}
                 alt="Crop Preview"
+                crossOrigin="anonymous"
                 style={{ width: "100%",height:"100%",objectFit:'contain'}}
                 onLoad={onImageLoad}
               />

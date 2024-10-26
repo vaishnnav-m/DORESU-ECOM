@@ -5,11 +5,11 @@ import Table from "../components/Table";
 
 function AdminDashboard() {
   return (
-    <div className="bg-[#E7E7E3] flex">
+    <div className="bg-[#E7E7E3] min-h-screen flex ">
       <Aside />
-      <main className="w-full">
+      <main className="w-full pl-[260px]">
         <Header />
-        <div className="p-5">
+        <div className="p-5 pt-[106px]">
           <div>
             <h2 className="text-[24px] font-bold">Dashboard</h2>
             <span className="text-[16px]">

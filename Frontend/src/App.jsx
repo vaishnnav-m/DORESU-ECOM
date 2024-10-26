@@ -31,6 +31,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProductDetail from "./user/pages/ProductDetail";
 import ProtectedRoutes from "./user/components/ProtectedRoutes";
+import AdminEditProduct from "./admin/pages/AdminEditProduct";
 
 function App() {
   const dispatch = useDispatch();
@@ -138,7 +139,7 @@ function App() {
           path="/admin/editProduct/:productId"
           element={
             <AdminProtetedRoutes>
-              <AdminAddProduct />
+              <AdminEditProduct />
             </AdminProtetedRoutes>
           }
         />

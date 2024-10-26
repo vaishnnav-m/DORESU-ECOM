@@ -130,9 +130,9 @@ function AdminCatagories() {
   return (
     <div className="bg-[#E7E7E3] flex min-h-screen">
       <Aside />
-      <main className="w-full">
+      <main className="w-full  pl-[260px]">
         <Header />
-        <div className="p-5">
+        <div className="p-5 pt-[106px]">
           <div>
             <h2 className="text-[24px] font-bold">Catagories</h2>
             <span className="text-[16px]">
