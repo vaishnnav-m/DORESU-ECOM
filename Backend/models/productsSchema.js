@@ -41,7 +41,7 @@ const productSchema = mongoose.Schema({
     ref: "category",
     required: true,
   },
-  verient: [variantSchema],
+  variants: [variantSchema],
   isActive: {
     type: Boolean,
     default: true,

@@ -60,7 +60,6 @@ const addProduct = async (req, res) => {
     if(!products || products.length === 0)
       return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND,"No products were found"));
 
-
     const updatedProducts = products.map((product) => {
       const imageUrls = product.gallery.map((image) => `${req.protocol}://${req.get("host")}/uploads/products/${image}`);
       return { ...product.toObject(), gallery: imageUrls };

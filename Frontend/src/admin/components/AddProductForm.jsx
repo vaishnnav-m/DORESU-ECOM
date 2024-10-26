@@ -4,69 +4,15 @@ import { useDropzone } from "react-dropzone";
 import {
   useAddProductMutation,
   useGetCategoriesQuery,
-  useGetProductQuery,
 } from "../../services/adminFethApi";
 import ImageCroper from "./ImageCroper";
 import * as Yup from "yup";
-import { useParams } from "react-router-dom";
 
 function AddProductForm() {
-  // if editing
+  //--------------> Image drop zone <-------------------//
+  // States
   const [profileImage, setProfileImage] = useState(null); // to display image
   const [thumbnail, setThumbnail] = useState([]); // for small images
-  const { productId } = useParams();
-  const [isEditing, setIsEditting] = useState(false);
-  const [formData, setFormData] = useState({
-    productName: "",
-    description: "",
-    category: "",
-    size: [],
-    stock: "",
-    price: "",
-    image: [],
-  });
-  const { data: product } = useGetProductQuery(productId, { skip: !productId });
- // Function to convert URL to File
- const convertUrlToFile = async (url, filename) => {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Network response was not ok');
-  const blob = await response.blob();
-  return new File([blob], filename, { type: blob.type });
-};
-
-useEffect(() => {
-  const fetchAndSetProductData = async () => {
-    if (product) {
-      setIsEditting(true);
-      
-      // Convert image URLs to Files
-      const files = await Promise.all(
-        product.data.gallery.map((image, index) =>
-          convertUrlToFile(image.url, `image-${index}.jpg`)
-        )
-      );
-
-      setFormData({
-        productName: product.data.productName,
-        description: product.data.description,
-        category: product.data.category,
-        size: product.data.size,
-        stock: product.data.stock,
-        price: product.data.price,
-        image: files, 
-      });
-      
-      setThumbnail(product.data.gallery);
-    }
-  };
-  fetchAndSetProductData();
-}, [product, productId]);
-
-
-  useEffect(() => {
-    setSelectedIndex(0);
-    setProfileImage(thumbnail[selectedIndex||0]);
-  }, [thumbnail]);
 
   // function to handle image
   const onDrop = useCallback(
@@ -82,11 +28,15 @@ useEffect(() => {
       }));
 
       setThumbnail((prev) => [...(prev || []), ...imageUrls]); // to set thumbnail
+
+      if (profileImage === null)
+        setProfileImage(URL.createObjectURL(acceptedFiles[0]));
     },
-    [setFormData, setThumbnail]
+    [profileImage]
   );
   // hook for image drop
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
   // useEffect to clean objectUrl
   useEffect(() => {
     return () => {
@@ -104,6 +54,15 @@ useEffect(() => {
   const { data: categoryData } = useGetCategoriesQuery();
 
   // States
+  const [formData, setFormData] = useState({
+    productName: "",
+    description: "",
+    category: "",
+    size: [],
+    stock: "",
+    price: "",
+    image: [],
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [formError, setFormError] = useState({});
@@ -139,21 +98,6 @@ useEffect(() => {
       .min(3, "At least Three image is required")
       .required("Image is Required"),
   });
-  // function to reset Form
-  function resetForm() {
-    setFormData({
-      productName: "",
-      description: "",
-      category: "",
-      size: [],
-      stock: "",
-      price: "",
-      image: [],
-    });
-    setFormError({});
-    setProfileImage(null);
-    setThumbnail([]);
-  }
 
   // function handle submit
   async function handdleSubmit(e) {
@@ -171,7 +115,18 @@ useEffect(() => {
         payload.append("file", file);
       });
       await addProduct(payload).unwrap();
-      resetForm();
+      setFormData({
+        productName: "",
+        description: "",
+        category: "",
+        size: [],
+        stock: "",
+        price: "",
+        image: [],
+      });
+      setFormError({});
+      setProfileImage(null);
+      setThumbnail([]);
     } catch (errors) {
       if (errors.inner) {
         const newErrors = {};
@@ -183,21 +138,21 @@ useEffect(() => {
       setFormError({});
     }
   }
-  // function to set cropped images
-  function setCropedImage(croppedFile) {
-    const imageUrl = URL.createObjectURL(croppedFile);
 
-    setFormData((prev) => {
-      const updatedImages = [...prev.image];
-      updatedImages[selectedIndex] = croppedFile
-      return { ...prev, image: updatedImages };
+  // function to handle Cancel
+  function handleCancel() {
+    setFormError({});
+    setThumbnail([]);
+    setProfileImage(null);
+    setFormData({
+      productName: "",
+      description: "",
+      category: "",
+      size: "",
+      stock: "",
+      price: "",
+      image: [],
     });
-
-    const updatedThumbnails = [...thumbnail];
-    updatedThumbnails[selectedIndex] = { url: imageUrl, file: croppedFile };
-
-    setThumbnail(updatedThumbnails);
-    setProfileImage(updatedThumbnails[selectedIndex]);
   }
 
   // function to handle remove
@@ -205,6 +160,24 @@ useEffect(() => {
     const filtered = thumbnail.filter((val, ind) => ind !== index);
     setThumbnail(filtered);
   }
+
+  // function to set cropped images
+  function setCropedImage(croppedFile) {
+    const imageUrl = URL.createObjectURL(croppedFile);
+    setProfileImage(imageUrl);
+
+    setFormData((prev) => {
+      const updatedImages = [croppedFile];
+      return { ...prev, image: updatedImages };
+    });
+
+    setThumbnail((prev) => {
+      const updatedThumbnails = [...prev];
+      updatedThumbnails[selectedIndex] = { url: imageUrl, file: croppedFile };
+      return updatedThumbnails;
+    });
+  }
+
   return (
     <form
       onSubmit={handdleSubmit}
@@ -339,7 +312,7 @@ useEffect(() => {
       </div>
       <div className="p-5 flex flex-col gap-5 relative">
         <div className="w-[428px] h-[428px] flex items-center bg-[#c8c8c8] rounded-2xl overflow-hidden">
-          <img className="w-full" src={profileImage?.url} alt="" />
+          <img className="w-full" src={profileImage} alt="" />
           <a
             onClick={() => setModalOpen(true)}
             className="text-[16px] absolute bg-[#c8c8c8] py-10 px-[5px] rounded-full top-1/5 left-2 text-black"
@@ -348,9 +321,10 @@ useEffect(() => {
           </a>
         </div>
         <div className="flex gap-2">
-          {thumbnail && thumbnail.map((img, index) => (
-            <div
-              key={index}
+          {thumbnail &&
+            thumbnail.map((img, index) => (
+              <div
+                key={index}
                 className="w-[100px] h-[100px] flex items-center bg-[#c8c8c8] rounded-2xl overflow-hidden relative"
               >
                 <a
@@ -398,10 +372,10 @@ useEffect(() => {
             type="submit"
             className="bg-black text-white flex-1 py-3 rounded-lg "
           >
-            {isEditing ? "Edit" : isLoading ? "Adding..." : "Add"}
+            {isLoading ? "Adding..." : "Add"}
           </button>
           <a
-            onClick={resetForm}
+            onClick={handleCancel}
             className="border border-black text-center cursor-pointer text-black flex-1 py-3 rounded-lg "
           >
             Cancel
@@ -418,7 +392,7 @@ useEffect(() => {
       {modalOpen && (
         <ImageCroper
           updateProfile={setCropedImage}
-          imageSrc={isEditing?formData.image[selectedIndex]:profileImage.url}
+          imageSrc={profileImage}
           closeModal={() => setModalOpen(false)}
         />
       )}
