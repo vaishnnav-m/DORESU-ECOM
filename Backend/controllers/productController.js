@@ -4,26 +4,24 @@ const {HttpStatus,createResponse} = require("../utils/generateResponse");
 
 // controller to handle products adding
 const addProduct = async (req, res) => {
-
-  const {productName,description,category,size,stock,price,} = req.body;
-
+  const {productName,description,category,variants,} = req.body;
+  
    if (!req.user.isAdmin)
      return res.status(HttpStatus.UNAUTHORIZED).json(HttpStatus.FORBIDDEN,"You don't have permission");
    try {
      const imageUrls = req.files.map((file) => file.filename);
- 
+    console.log("imageUrls",imageUrls);
+    console.log("req files",req.files);
      const productData = new Product({
        productName,
        description,
        category,
-       size,
-       stock,
-       price,
+       variants,
        gallery: imageUrls,
      });
  
      await productData.save();
- 
+     console.log("saved",productData);
      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"Product added Successfully"));
  
    } catch (error) {
@@ -76,6 +74,7 @@ const addProduct = async (req, res) => {
 
  const getProduct = async (req,res) => {
   try {
+    console.log("working");
     const {productId} = req.params;
     const productData = await Product.findById(productId);
     if(!productData)

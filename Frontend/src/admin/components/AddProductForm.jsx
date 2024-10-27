@@ -14,6 +14,21 @@ function AddProductForm() {
   const [profileImage, setProfileImage] = useState(null); // to display image
   const [thumbnail, setThumbnail] = useState([]); // for small images
 
+  // variant adding
+  const [variants, setVariants] = useState([
+    { size: "", stock: "", price: "" },
+  ]);
+  const handleChangeVariant = (index, e) => {
+    const { name, value } = e.target;
+    const updatedVariants = [...variants];
+    updatedVariants[index][name] = value;
+    setVariants(updatedVariants);
+  };
+
+  const addNewVariant = () => {
+    setVariants([...variants, { size: "", stock: "", price: "" }]);
+  };
+
   // function to handle image
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -58,9 +73,7 @@ function AddProductForm() {
     productName: "",
     description: "",
     category: "",
-    size: [],
-    stock: "",
-    price: "",
+    variants: [],
     image: [],
   });
   const [modalOpen, setModalOpen] = useState(false);
@@ -74,26 +87,14 @@ function AddProductForm() {
     });
   }
 
-  // function to handle checkbox change
-  function handleCheckboxChange(e) {
-    const { value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      size: checked
-        ? [...prev.size, value]
-        : prev.size.filter((size) => size !== value),
-    }));
-  }
   // validate schema
   const validateSchema = Yup.object({
     productName: Yup.string().required("Product Name is Required"),
     description: Yup.string().required("Descritption is Required"),
     category: Yup.string().required("category is Required"),
-    size: Yup.array()
-      .min(1, "At least one size is required")
-      .required("Size is Required"),
-    stock: Yup.string().required("Stock is Required"),
-    price: Yup.string().required("Price is Required"),
+    variants: Yup.array()
+      .min(2, "At least one variant is required")
+      .required("variant is Required"),
     image: Yup.array()
       .min(3, "At least Three image is required")
       .required("Image is Required"),
@@ -103,25 +104,28 @@ function AddProductForm() {
   async function handdleSubmit(e) {
     try {
       e.preventDefault();
+      console.log(formData);
+      formData.variants = [...variants];
       await validateSchema.validate(formData, { abortEarly: false });
       const payload = new FormData();
       payload.append("productName", formData.productName);
       payload.append("description", formData.description);
       payload.append("category", formData.category);
-      payload.append("size", formData.size);
-      payload.append("stock", formData.stock);
-      payload.append("price", formData.price);
+      variants.forEach((variant, index) => {
+        payload.append(`variants[${index}][size]`, variant.size);
+        payload.append(`variants[${index}][stock]`, variant.stock);
+        payload.append(`variants[${index}][price]`, variant.price);
+      });
       formData.image.forEach((file) => {
+        console.log(file);
         payload.append("file", file);
       });
+      console.log(formData);
       await addProduct(payload).unwrap();
       setFormData({
         productName: "",
         description: "",
         category: "",
-        size: [],
-        stock: "",
-        price: "",
         image: [],
       });
       setFormError({});
@@ -148,16 +152,19 @@ function AddProductForm() {
       productName: "",
       description: "",
       category: "",
-      size: "",
-      stock: "",
-      price: "",
+      variants: [],
       image: [],
     });
   }
 
   // function to handle remove
   function handleRemove(index) {
+    const formFiltered = formData.image.filter((val,ind) => ind !== index);
     const filtered = thumbnail.filter((val, ind) => ind !== index);
+    setFormData((prev) => ({
+      ...prev,
+      image:formFiltered
+    }))
     setThumbnail(filtered);
   }
 
@@ -167,7 +174,8 @@ function AddProductForm() {
     setProfileImage(imageUrl);
 
     setFormData((prev) => {
-      const updatedImages = [croppedFile];
+      const updatedImages = [...prev.image];
+      updatedImages[selectedIndex] = croppedFile;
       return { ...prev, image: updatedImages };
     });
 
@@ -236,59 +244,87 @@ function AddProductForm() {
         </div>
 
         <h2 className="">Variants</h2>
-        <div className="flex flex-col gap-4 border p-5 rounded-lg border-gray-300">
-          <div className="flex flex-col gap-2">
-            <h2>Size</h2>
-            <div className="border border-black rounded-md px-5 py-2">
-              <select
-                name="category"
-                className="w-full bg-transparent focus:outline-none text-[#79767C] font-thin"
-                onChange={handleChange}
-                value={formData.category}
+        <div className="flex flex-col gap-4">
+          {variants.map((variant, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-4 border p-5 rounded-lg border-gray-300"
+            >
+              <div className="flex flex-col gap-2">
+                <h2>Size</h2>
+                <div className="border border-black rounded-md px-5 py-2">
+                  <select
+                    name="size"
+                    className="w-full bg-transparent focus:outline-none text-[#79767C] font-thin"
+                    onChange={(e) => handleChangeVariant(index, e)}
+                    value={variant.size}
+                  >
+                    <option value="">Please select an option</option>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                    <option value="extra large">Extra Large</option>
+                  </select>
+                </div>
+                {formError.size && (
+                  <span className="text-red-600">{formError.size}</span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h2>Stock Quantity</h2>
+                <input
+                  className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
+                  placeholder="Type Quantity here"
+                  type="text"
+                  name="stock"
+                  onChange={(e) => handleChangeVariant(index, e)}
+                  value={variant.stock}
+                />
+                {formError.stock && (
+                  <span className="text-red-600">{formError.stock}</span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h2>Sale Price</h2>
+                <input
+                  className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
+                  placeholder="Type Price here"
+                  type="text"
+                  name="price"
+                  onChange={(e) => handleChangeVariant(index, e)}
+                  value={variant.price}
+                />
+                {formError.price && (
+                  <span className="text-red-600">{formError.price}</span>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setVariants(
+                    variants.filter((val, vindex) => vindex !== index)
+                  )
+                }
+                className="w-[100px] rounded-lg px-5 py-3 border border-gray-400"
               >
-                <option value="">Please select an option</option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-                <option value="extra large">Extra Large</option>
-              </select>
+                Cancel
+              </button>
             </div>
-
-            {formError.size && (
-              <span className="text-red-600">{formError.size}</span>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h2>Stock Quantity</h2>
-            <input
-              className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
-              placeholder="Type Quantity here"
-              type="text"
-              name="stock"
-              onChange={handleChange}
-              value={formData.stock}
-            />
-
-            {formError.stock && (
-              <span className="text-red-600">{formError.stock}</span>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h2>Sale Price</h2>
-            <input
-              className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
-              placeholder="Type Price here"
-              type="text"
-              name="price"
-              onChange={handleChange}
-              value={formData.price}
-            />
-            {formError.price && (
-              <span className="text-red-600">{formError.price}</span>
-            )}
-          </div>
+          ))}
+          {formError.variants && (
+            <span className="text-red-600">{formError.variants}</span>
+          )}
           <div className="w-full text-end">
-            <button type="button" className="bg-black rounded-lg px-5 py-3 text-white">Add new varient</button>
+            <button
+              type="button"
+              onClick={addNewVariant}
+              className="bg-black rounded-lg px-5 py-3 text-white"
+            >
+              Add new variant
+            </button>
           </div>
         </div>
       </div>

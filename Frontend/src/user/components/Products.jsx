@@ -14,9 +14,6 @@ function Products() {
     isError: isProductsError,
     error: productsError,
   } = useGetProuductsQuery();
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
 
   return (
     <div className="w-full px-[15%]">
@@ -66,7 +63,7 @@ function Products() {
                         free delivery
                       </span>
                       <span className="font-bold pt-2 text-[19px]">
-                        ₹{product.price}
+                        ₹{product.variants[0].price}
                       </span>
                     </div>
                     <div className="min-h-full flex flex-col justify-between pt-[10px] ">

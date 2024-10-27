@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Aside from "../components/Aside";
 import Table from "../components/Table";
@@ -123,6 +123,22 @@ function AdminProducts() {
   function handleEdit(product) {
     navigate(`/admin/editProduct/${product._id}`);
   }
+  const [updatedData,setUpdatedData] = useState([]);
+  useEffect(() => {
+    if(data){
+      const mappedData = data.data.map((item) => ({
+        _id:item._id,
+        productName: item.productName,
+        description: item.description,
+        stock: item.variants[0]?.stock || 0,  
+        price: item.variants[0]?.price || 0,
+        isActive:item.isActive,
+        gallery:item.gallery
+      }));
+      setUpdatedData(mappedData)
+    }
+  },[data])
+
 
   return (
     <div className="bg-[#E7E7E3] flex min-h-screen">
@@ -140,7 +156,7 @@ function AdminProducts() {
         <div className="p-10 pt-[136px]">
           <Table
             pageName={"Product Management"}
-            data={data?.data}
+            data={updatedData}
             headings={headings}
             columns={columns}
             buttonConfigs={buttonConfigs}
