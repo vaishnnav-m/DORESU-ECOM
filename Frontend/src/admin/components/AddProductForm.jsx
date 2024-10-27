@@ -184,7 +184,7 @@ function AddProductForm() {
       className="min-w-full bg-white rounded-2xl overflow-hidden flex gap-10 p-5 font-bold"
     >
       <div className="flex-1 flex flex-col gap-4">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <h2>Product Name</h2>
           <input
             className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
@@ -198,7 +198,7 @@ function AddProductForm() {
             <span className="text-red-600">{formError.productName}</span>
           )}
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <h2>Description</h2>
           <textarea
             className="border border-black rounded-md px-5 py-2 min-h-[180px] placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin resize-none"
@@ -212,7 +212,7 @@ function AddProductForm() {
             <span className="text-red-600">{formError.description}</span>
           )}
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <h2>Category</h2>
           <div className="border border-black rounded-md px-5 py-2">
             <select
@@ -234,80 +234,62 @@ function AddProductForm() {
             <span className="text-red-600">{formError.category}</span>
           )}
         </div>
-        <div className="flex flex-col gap-3">
-          <h2>Size</h2>
 
-          <div className="flex gap-3 px-5 py-2 text-[#5e5d61] font-semibold">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                value="small"
-                onChange={handleCheckboxChange}
-                checked={formData.size.includes("small")}
-              />
-              Small
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                value="medium"
-                onChange={handleCheckboxChange}
-                checked={formData.size.includes("medium")}
-              />
-              Medium
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                value="large"
-                onChange={handleCheckboxChange}
-                checked={formData.size.includes("large")}
-              />
-              Large
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                value="extra large"
-                onChange={handleCheckboxChange}
-                checked={formData.size.includes("extra large")}
-              />
-              Extra Large
-            </label>
+        <h2 className="">Variants</h2>
+        <div className="flex flex-col gap-4 border p-5 rounded-lg border-gray-300">
+          <div className="flex flex-col gap-2">
+            <h2>Size</h2>
+            <div className="border border-black rounded-md px-5 py-2">
+              <select
+                name="category"
+                className="w-full bg-transparent focus:outline-none text-[#79767C] font-thin"
+                onChange={handleChange}
+                value={formData.category}
+              >
+                <option value="">Please select an option</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+                <option value="extra large">Extra Large</option>
+              </select>
+            </div>
+
+            {formError.size && (
+              <span className="text-red-600">{formError.size}</span>
+            )}
           </div>
+          <div className="flex flex-col gap-2">
+            <h2>Stock Quantity</h2>
+            <input
+              className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
+              placeholder="Type Quantity here"
+              type="text"
+              name="stock"
+              onChange={handleChange}
+              value={formData.stock}
+            />
 
-          {formError.size && (
-            <span className="text-red-600">{formError.size}</span>
-          )}
-        </div>
-        <div className="flex flex-col gap-3">
-          <h2>Stock Quantity</h2>
-          <input
-            className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
-            placeholder="Type Quantity here"
-            type="text"
-            name="stock"
-            onChange={handleChange}
-            value={formData.stock}
-          />
-
-          {formError.stock && (
-            <span className="text-red-600">{formError.stock}</span>
-          )}
-        </div>
-        <div className="flex flex-col gap-3">
-          <h2>Sale Price</h2>
-          <input
-            className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
-            placeholder="Type Price here"
-            type="text"
-            name="price"
-            onChange={handleChange}
-            value={formData.price}
-          />
-          {formError.price && (
-            <span className="text-red-600">{formError.price}</span>
-          )}
+            {formError.stock && (
+              <span className="text-red-600">{formError.stock}</span>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <h2>Sale Price</h2>
+            <input
+              className="border border-black rounded-md px-5 py-2 placeholder:text-[16px] placeholder:text-[#79767C] placeholder:font-thin"
+              placeholder="Type Price here"
+              type="text"
+              name="price"
+              onChange={handleChange}
+              value={formData.price}
+            />
+            {formError.price && (
+              <span className="text-red-600">{formError.price}</span>
+            )}
+          </div>
+          <div className="w-full text-end">
+            <button type="button" className="bg-black rounded-lg px-5 py-3 text-white">Add new varient</button>
+          </div>
         </div>
       </div>
       <div className="p-5 flex flex-col gap-5 relative">

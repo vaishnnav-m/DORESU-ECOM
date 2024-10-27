@@ -2,11 +2,14 @@ const express = require('express');
 const user_route = express.Router();
 const userController = require('../controllers/userController');
 const productController = require('../controllers/productController')
-const verifyToken = require('../middlewares/tokenCheck')
+const verifyToken = require('../middlewares/tokenCheck');
+const googleAuthController = require('../controllers/googleAuthController');
 
 user_route.post('/signup',userController.postSignup);
 
 user_route.post('/login',userController.postLogin);
+
+user_route.post('/googleAuth',googleAuthController.google_authentication);
 
 user_route.post('/verifyOtp',userController.verifyOtp);
 

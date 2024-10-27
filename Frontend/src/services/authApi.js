@@ -37,7 +37,14 @@ const authApi = api.injectEndpoints({
         body:userId
       })
     }),
-
+    // mutation to send google auth
+    googleAuth:builder.mutation({
+      query:(credentials) => ({
+        url:'/api/googleAuth',
+        method:'POST',
+        body:credentials
+      })
+    }),
     // query to get accesstoken
     refreshToken:builder.query({
       query:() => 'api/refresh',
@@ -71,4 +78,5 @@ export const {
   useResendOtpMutation,
   useLogoutUserMutation,
   useRefreshTokenQuery,
+  useGoogleAuthMutation
 } = authApi;

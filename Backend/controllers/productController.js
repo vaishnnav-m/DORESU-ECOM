@@ -1,25 +1,6 @@
 const Product = require("../models/productsSchema");
 const Category = require("../models/catagorySchema");
-
-
-// Enum that contains http status
-const HttpStatus = {
-  OK: 200,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND : 404,
-  INTERNAL_SERVER_ERROR: 500,
-}
-
-// fuction to create response
-const createResponse = (status,message,data = null) => {
-  return {
-    status,
-    message,
-    data
-  }
-}
+const {HttpStatus,createResponse} = require("../utils/generateResponse");
 
 // controller to handle products adding
 const addProduct = async (req, res) => {

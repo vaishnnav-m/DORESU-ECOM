@@ -8,7 +8,6 @@ const userSchema = mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -16,11 +15,14 @@ const userSchema = mongoose.Schema(
     },
     phone: {
       type: Number,
-      required: true,
     },
     password: {
       type: String,
-      required: true,
+    },
+    googleId:{
+      type:String,
+      unique: true,
+      sparse: true,
     },
     isActive: {
       type: Boolean,
@@ -32,7 +34,7 @@ const userSchema = mongoose.Schema(
     },
     isAdmin: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     otp: { 
       type: String 
