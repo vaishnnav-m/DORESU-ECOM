@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ReactImageMagnify from "react-image-magnify";
 import Header from "../components/Header";
 import stars from "../assets/stars.svg";
 import { useGetProductQuery } from "../../services/userProductsApi";
+import "./pageStyles.css";
 
 function ProductDetail() {
   const { productId } = useParams();
   const { data: product } = useGetProductQuery(productId);
   const [productData, setProductData] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
   useEffect(() => {
     if (product && product.data) {
-      setProductData(product.data);
+      console.log("Product Data", product.data);
+      setProductData(product?.data);
+      setMainImage(product.data.gallery[0].url);
     }
   }, [product]);
 
@@ -25,7 +30,7 @@ function ProductDetail() {
       case "extra large":
         return "XL";
       default:
-        return size; 
+        return size;
     }
   };
 
@@ -33,32 +38,72 @@ function ProductDetail() {
     <div>
       <Header />
       <main className="w-full flex flex-col py-20 gap-20 items-center">
-        <div className="flex gap-5 max-w-[70%]">
+        <div className="flex gap-5 w-[70%] max-w-[70%]">
           <div className="flex-1 flex gap-3">
             <div className="max-w-[100px] flex flex-col gap-2">
               {productData?.gallery.map((product, index) => (
                 <div key={index}>
-                  <img src={product.url} alt="" />
+                  <img
+                    onMouseEnter={() => setMainImage(product.url)}
+                    src={product.url}
+                    alt=""
+                  />
                 </div>
               ))}
             </div>
             <div className="flex-1 flex flex-col gap-6">
-              <div className="w-full h-[472px] border">
-                <img
-                  className="w-full h-full object-contain"
-                  src={productData?.gallery[0].url}
-                  alt=""
+              <div className="flex justify-center min-w-full  h-[472px] border">
+                <ReactImageMagnify
+                  {...{
+                    smallImage: {
+                      alt: "Wristwatch by Ted Baker London",
+                      isFluidWidth: false,
+                      width: 400,
+                      height: 472,
+                      src: mainImage,
+                    },
+                    largeImage: {
+                      src: mainImage,
+                      width: 1600,
+                      height: 1800,
+                    },
+                    shouldUsePositiveSpaceLens: true,
+                    enlargedImageContainerDimensions: {
+                      width: "200%",
+                      height: "100%",
+                    },
+                    lensStyle: {
+                      width: "100px",
+                      height: "100px",
+                    },
+                    enlargedImagePosition: "beside",
+                  }}
                 />
               </div>
               <div className="w-full flex gap-5 text-20px] font-bold">
-                <button className="w-full py-4 border border-black flex gap-3 justify-center items-center rounded-xl">
+                <div></div>
+                <button
+                  disabled={productData?.variants[0].stock === 0}
+                  className="w-full py-4 border border-black flex gap-3 justify-center items-center rounded-xl"
+                >
                   <i className="fas fa-cart-shopping"></i>Add to Cart
                 </button>
-                <button className="w-full py-4 bg-black text-white rounded-xl">
+                <button
+                  disabled={productData?.variants[0].stock === 0}
+                  className="w-full py-4 bg-black text-white rounded-xl"
+                >
                   Buy Now
                 </button>
               </div>
-              <div className="pt-5">
+              {productData?.variants[0].stock === 0 && (
+                <span className="text-red-500 text-[20px]">out of stock</span>
+              )}
+              {(productData?.variants[0].stock <= 10 && productData?.variants[0].stock > 0) && (
+                <span className="text-red-400 text-[20px]">{productData?.variants[0].stock} left hurry !</span>
+              )}
+
+              {/* for color section */}
+              {/* <div className="pt-5">
                 <h2 className="text-[18px]">Similar Products</h2>
                 <div className="flex justify-between gap-2">
                   {productData?.gallery.map((product, index) => (
@@ -70,16 +115,19 @@ function ProductDetail() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex-1 flex items-center flex-col gap-5">
-            <div className="w-full border rounded-xl p-5 flex flex-col shadow-lg gap-2">
+            <div
+              id="portalID"
+              className="w-full border rounded-xl p-5 flex flex-col shadow-lg gap-2"
+            >
               <span className="text-[18px] font-semibold text-[#8A8A8A] uppercase">
                 {productData?.productName}
               </span>
               <h2 className="text-[32px] font-bold">
-                {productData?.variants[0].price}
+                ₹ {productData?.variants[0].price}
               </h2>
               <div className="flex gap-2 items-center">
                 <img src={stars} alt="" />
@@ -94,9 +142,12 @@ function ProductDetail() {
             <div className="w-full border rounded-xl p-5 flex flex-col shadow-lg gap-2">
               <span className="text-[18px]">Select Size</span>
               <div className="flex gap-3">
-                {productData?.variants.map((variant,index) => {
+                {productData?.variants.map((variant, index) => {
                   return (
-                    <span key={index} className="w-fit p-5 border border-[#b8b8b8] rounded-xl">
+                    <span
+                      key={index}
+                      className="w-fit p-5 border border-[#b8b8b8] rounded-xl"
+                    >
                       {getShortenedSize(variant.size)}
                     </span>
                   );
@@ -107,7 +158,12 @@ function ProductDetail() {
               <span className="text-[18px] text-black">Product Details</span>
               <span>Name:{productData?.productName}</span>
               <span>Net Quantity (N) :1</span>
-              <span>Sizes: {productData?.variants.map((variant) => getShortenedSize(variant.size)+" " )}</span>
+              <span>
+                Sizes:{" "}
+                {productData?.variants.map(
+                  (variant) => getShortenedSize(variant.size) + " "
+                )}
+              </span>
               <span>{productData?.description}</span>
               <span>Country of Origin : India</span>
               <span>More Information</span>

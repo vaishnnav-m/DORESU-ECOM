@@ -171,7 +171,6 @@ function EditProductForm() {
         });
         return setFormError(newErrors);
       }
-        setModal(false);
         toast.error("Product Updation failed !", {
           position: "top-right",
           theme: "dark",

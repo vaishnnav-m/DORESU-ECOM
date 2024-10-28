@@ -19,3 +19,13 @@
       transform: translate(0px, 0px); 
    }
 }
+
+
+.productImage div{
+   height: 100% !important;
+}
+
+.productImage div img{
+   height: 100% !important;
+}
+

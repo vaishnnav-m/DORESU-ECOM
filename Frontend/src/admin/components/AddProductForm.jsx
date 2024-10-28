@@ -1,6 +1,7 @@
 import "react-image-crop/dist/ReactCrop.css";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
 import {
   useAddProductMutation,
   useGetCategoriesQuery,
@@ -64,8 +65,7 @@ function AddProductForm() {
   //--------------> Form Area <-------------------//
   // Mutations
 
-  const [addProduct, { data, isSuccess, isLoading, isError, error }] =
-    useAddProductMutation();
+  const [addProduct, { isLoading }] = useAddProductMutation();
   const { data: categoryData } = useGetCategoriesQuery();
 
   // States
@@ -100,6 +100,8 @@ function AddProductForm() {
       .required("Image is Required"),
   });
 
+  console.log("formdata",formData);
+
   // function handle submit
   async function handdleSubmit(e) {
     try {
@@ -121,13 +123,23 @@ function AddProductForm() {
         payload.append("file", file);
       });
       console.log(formData);
-      await addProduct(payload).unwrap();
+      const response = await addProduct(payload).unwrap();
+
+      if (response) {
+        toast.success("Product added !", {
+          position: "top-right",
+          theme: "dark",
+        });
+      }
+
       setFormData({
         productName: "",
         description: "",
         category: "",
+        variants: [],
         image: [],
       });
+      setVariants([{ size: "", stock: "", price: "" }]);
       setFormError({});
       setProfileImage(null);
       setThumbnail([]);
@@ -139,6 +151,10 @@ function AddProductForm() {
         });
         return setFormError(newErrors);
       }
+      toast.error("Product adding failed !", {
+        position: "top-right",
+        theme: "dark",
+      });
       setFormError({});
     }
   }
@@ -159,12 +175,12 @@ function AddProductForm() {
 
   // function to handle remove
   function handleRemove(index) {
-    const formFiltered = formData.image.filter((val,ind) => ind !== index);
+    const formFiltered = formData.image.filter((val, ind) => ind !== index);
     const filtered = thumbnail.filter((val, ind) => ind !== index);
     setFormData((prev) => ({
       ...prev,
-      image:formFiltered
-    }))
+      image: formFiltered,
+    }));
     setThumbnail(filtered);
   }
 
@@ -399,13 +415,6 @@ function AddProductForm() {
             Cancel
           </a>
         </div>
-        {isError && (
-          <span className="text-red-500">
-            {error?.data?.message || "Upload failed"}
-          </span>
-        )}
-
-        {isSuccess && <span className="text-green-500">{data.message}</span>}
       </div>
       {modalOpen && (
         <ImageCroper

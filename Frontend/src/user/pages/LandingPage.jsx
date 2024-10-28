@@ -9,7 +9,7 @@ import cardTxt from "../assets/ultimateSale.svg";
 import banner2img from "../assets/image.jpg";
 import paginationActive from "../assets/Active.svg";
 import paginationNonActive from "../assets/Ellipse 1.svg";
-import "./landingpage.css";
+import "./pageStyles.css";
 import Products from "../components/Products";
 
 function LandingPage() {
