@@ -91,7 +91,16 @@ const adminFetchApi = adminApi.injectEndpoints({
     getProduct:builder.query({
       query:(id) => ({
         url:`/getProduct/${id}`
-      })
+      }),
+      providesTags:['getProduct']
+    }),
+    editProduct:builder.mutation({
+      query:credentials => ({
+        url:'/products/editProduct',
+        method:'PUT',
+        body:credentials
+      }),
+      invalidatesTags:['getProduct']
     })
   }),
   overrideExisting: false,
@@ -109,5 +118,6 @@ export const {
   useAddProductMutation,
   useGetProdutsQuery,
   useUpdateProductStatusMutation,
-  useGetProductQuery
+  useGetProductQuery,
+  useEditProductMutation
 } = adminFetchApi;

@@ -30,4 +30,6 @@ admin_route.patch('/products/updateStatus',verifyToken,productController.updateS
 
 admin_route.get('/getProduct/:productId',productController.getProduct);
 
+admin_route.put('/products/editProduct',verifyToken,upload.array('file',5),productController.editProduct);
+
 module.exports = admin_route;

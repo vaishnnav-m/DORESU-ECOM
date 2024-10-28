@@ -10,8 +10,6 @@ const addProduct = async (req, res) => {
      return res.status(HttpStatus.UNAUTHORIZED).json(HttpStatus.FORBIDDEN,"You don't have permission");
    try {
      const imageUrls = req.files.map((file) => file.filename);
-    console.log("imageUrls",imageUrls);
-    console.log("req files",req.files);
      const productData = new Product({
        productName,
        description,
@@ -74,7 +72,6 @@ const addProduct = async (req, res) => {
 
  const getProduct = async (req,res) => {
   try {
-    console.log("working");
     const {productId} = req.params;
     const productData = await Product.findById(productId);
     if(!productData)
@@ -91,9 +88,43 @@ const addProduct = async (req, res) => {
   }
  }
 
+ const editProduct = async (req,res) => {
+  if(!req.user.isAdmin)
+    return res.status(HttpStatus.UNAUTHORIZED).json(createResponse(HttpStatus.UNAUTHORIZED,"You don't have permission"));
+  try {
+
+    const {productId,productName,description,category,variants} = req.body;
+
+    const productData = await Product.findById(productId);
+
+    if(!productData)
+      return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus,"Product not found"));
+
+    const imageUrls = req.files && req.files.length > 0 ?  req.files.map((file) => file.filename) : productData.gallery;
+
+    await Product.findByIdAndUpdate(productId,{
+      productName,
+      description,
+      category,
+      variants,
+      gallery:imageUrls
+    });
+
+    res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"Product updated successfully"));
+
+    
+  } catch (error) {
+
+    console.log(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
+    
+  }
+ }
+
  module.exports = {
    addProduct,
    getProducts,
    updateStatus,
-   getProduct
+   getProduct,
+   editProduct
  }
