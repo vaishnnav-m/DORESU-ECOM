@@ -32,6 +32,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProductDetail from "./user/pages/ProductDetail";
 import ProtectedRoutes from "./user/components/ProtectedRoutes";
 import AdminEditProduct from "./admin/pages/AdminEditProduct";
+import AllProducts from "./user/pages/AllProducts";
 
 function App() {
   const dispatch = useDispatch();
@@ -90,6 +91,14 @@ function App() {
             </PublicRoute>
           }
         />{" "}
+         <Route
+          path="/all"
+          element={
+            <ProtectedRoutes>
+              <AllProducts />
+            </ProtectedRoutes>
+          }
+        />
         <Route
           path="/productDetail/:productId"
           element={

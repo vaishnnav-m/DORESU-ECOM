@@ -45,7 +45,7 @@ function AdminProducts() {
     setSelectedProduct({ id: _id, isActive: isActive });
     
     if (isActive) {
-      setModalHeading("Delete Product");
+      setModalHeading("Unpublish Product");
       setModalText("Are you sure to deactivate this product? If you deactivate it, users can't see the product.");
       setButtonCofigsModal([
         {
@@ -60,7 +60,7 @@ function AdminProducts() {
         },
       ]);
     } else {
-      setModalHeading("Activate Product");
+      setModalHeading("Publish Product");
       setModalText("Are you sure to activate this product? If you activate it, users can see the product.");
       setButtonCofigsModal([
         {

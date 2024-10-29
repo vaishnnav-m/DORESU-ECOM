@@ -5,6 +5,8 @@ import Header from "../components/Header";
 import stars from "../assets/stars.svg";
 import { useGetProductQuery } from "../../services/userProductsApi";
 import "./pageStyles.css";
+import { Link } from "react-router-dom";
+import Products from "../components/Products";
 
 function ProductDetail() {
   const { productId } = useParams();
@@ -34,11 +36,17 @@ function ProductDetail() {
     }
   };
 
+  useEffect(() => {
+
+    window.scrollTo(0,0)
+
+  },[productId])
+
   return (
     <div>
       <Header />
       <main className="w-full flex flex-col py-20 gap-20 items-center">
-        <div className="flex gap-5 w-[70%] max-w-[70%]">
+        <div className="flex gap-5 w-[100%] max-w-[70%]">
           <div className="flex-1 flex gap-3">
             <div className="max-w-[100px] flex flex-col gap-2">
               {productData?.gallery.map((product, index) => (
@@ -52,11 +60,11 @@ function ProductDetail() {
               ))}
             </div>
             <div className="flex-1 flex flex-col gap-6">
-              <div className="flex justify-center min-w-full  h-[472px] border">
+              <div className="flex justify-center min-w-full h-[472px] border">
                 <ReactImageMagnify
                   {...{
                     smallImage: {
-                      alt: "Wristwatch by Ted Baker London",
+                      alt: "main image",
                       isFluidWidth: false,
                       width: 400,
                       height: 472,
@@ -64,7 +72,7 @@ function ProductDetail() {
                     },
                     largeImage: {
                       src: mainImage,
-                      width: 1600,
+                      width: 1200,
                       height: 1800,
                     },
                     shouldUsePositiveSpaceLens: true,
@@ -72,16 +80,11 @@ function ProductDetail() {
                       width: "200%",
                       height: "100%",
                     },
-                    lensStyle: {
-                      width: "100px",
-                      height: "100px",
-                    },
                     enlargedImagePosition: "beside",
                   }}
                 />
               </div>
               <div className="w-full flex gap-5 text-20px] font-bold">
-                <div></div>
                 <button
                   disabled={productData?.variants[0].stock === 0}
                   className="w-full py-4 border border-black flex gap-3 justify-center items-center rounded-xl"
@@ -98,9 +101,12 @@ function ProductDetail() {
               {productData?.variants[0].stock === 0 && (
                 <span className="text-red-500 text-[20px]">out of stock</span>
               )}
-              {(productData?.variants[0].stock <= 10 && productData?.variants[0].stock > 0) && (
-                <span className="text-red-400 text-[20px]">{productData?.variants[0].stock} left hurry !</span>
-              )}
+              {productData?.variants[0].stock <= 10 &&
+                productData?.variants[0].stock > 0 && (
+                  <span className="text-red-400 text-[20px]">
+                    {productData?.variants[0].stock} left hurry !
+                  </span>
+                )}
 
               {/* for color section */}
               {/* <div className="pt-5">
@@ -119,10 +125,10 @@ function ProductDetail() {
             </div>
           </div>
           <div className="flex-1 flex items-center flex-col gap-5">
-            <div
-              id="portalID"
-              className="w-full border rounded-xl p-5 flex flex-col shadow-lg gap-2"
-            >
+            <span className="w-full flex items-center gap-2 text-[15px] text-[#8A8A8A] uppercase">
+              <Link to="/">home</Link> <i className="fas fa-angle-right"></i> productDeatails
+            </span>
+            <div className="w-full border rounded-xl p-5 flex flex-col shadow-lg gap-2">
               <span className="text-[18px] font-semibold text-[#8A8A8A] uppercase">
                 {productData?.productName}
               </span>
@@ -255,6 +261,12 @@ function ProductDetail() {
             </div>
           </div>
         </div>
+      <div className="flex justify-center">
+        <div className="w-[100%]">
+          <h2 className="text-[20px] font-semibold">Similar Products</h2>
+          <Products/>
+        </div>
+      </div>
       </main>
     </div>
   );

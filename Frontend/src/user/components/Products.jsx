@@ -16,25 +16,7 @@ function Products() {
   } = useGetProuductsQuery();
 
   return (
-    <div className="w-full px-[15%]">
-      <div className="w-full flex justify-between pt-14 px-[50px]">
-        <button className="uppercase px-[70px] py-3 max-w-fit text-white text-[13px] bg-black rounded-lg">
-          Men's Fashion
-        </button>
-        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
-          T-shirts
-        </button>
-        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
-          Shirts
-        </button>
-        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
-          Hoodies
-        </button>
-        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
-          Hoodies
-        </button>
-      </div>
-
+    <div className="w-full">
       <div className="grid grid-cols-4 gap-5 py-8 text-[25px]">
         {isProductsSuccess &&
           products.data.map((product) => {

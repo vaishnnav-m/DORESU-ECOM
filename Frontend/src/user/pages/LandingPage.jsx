@@ -129,8 +129,26 @@ function LandingPage() {
             sollicitudin
           </span>
         </div>
-
+      <div className="max-w-[70%]">
+      <div className="w-full flex justify-between pt-14 px-[50px]">
+        <button className="uppercase px-[70px] py-3 max-w-fit text-white text-[13px] bg-black rounded-lg">
+          Men's Fashion
+        </button>
+        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
+          T-shirts
+        </button>
+        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
+          Shirts
+        </button>
+        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
+          Hoodies
+        </button>
+        <button className="uppercase px-[70px] py-3 max-w-fit text-[#8A8A8A] text-[13px] bg-[#FAFAFA] rounded-lg">
+          Hoodies
+        </button>
+      </div>
         <Products/>
+      </div>
       </section>
     </div>
   );

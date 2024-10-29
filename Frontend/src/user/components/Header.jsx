@@ -46,7 +46,7 @@ function Header() {
               <Link to="/">Home</Link>
             </li>
             <li className="hover:scale-110">
-              <Link>All Products</Link>
+              <Link to="/all">All Products</Link>
             </li>
             <li className="hover:scale-110">
               <Link>About</Link>
