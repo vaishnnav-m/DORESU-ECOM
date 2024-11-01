@@ -33,6 +33,8 @@ import ProductDetail from "./user/pages/ProductDetail";
 import ProtectedRoutes from "./user/components/ProtectedRoutes";
 import AdminEditProduct from "./admin/pages/AdminEditProduct";
 import AllProducts from "./user/pages/AllProducts";
+import CartPage from "./user/pages/CartPage";
+import UserProfile from "./user/pages/UserProfile";
 
 function App() {
   const dispatch = useDispatch();
@@ -99,11 +101,30 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        {/* product detail */}
         <Route
           path="/productDetail/:productId"
           element={
             <ProtectedRoutes>
               <ProductDetail />
+            </ProtectedRoutes>
+          }
+        />
+        {/* cart page */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoutes>
+              <CartPage />
+            </ProtectedRoutes>
+          }
+        />
+        {/* user profile page */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoutes>
+              <UserProfile />
             </ProtectedRoutes>
           }
         />

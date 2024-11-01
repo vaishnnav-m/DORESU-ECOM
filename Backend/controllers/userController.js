@@ -214,7 +214,7 @@ const refreshToken = (req, res) => {
         if (err) return res.status(403).json({ message: "Forbidden" });
 
         const userData = await User.findById(user.id);
-        if (!userData) return res.status(401).json({ message: "Unautherized" });
+        if (!userData || !userData.isActive) return res.status(401).json({ message: "Unautherized" });
 
         const accessToken = jwt.sign(
           { id: userData._id, isAdmin:true },

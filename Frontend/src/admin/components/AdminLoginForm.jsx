@@ -55,7 +55,7 @@ function AdminLoginForm() {
         />
       </div>
 
-      <div className="w-full border text-right pr-2 border-[#8A8A8A] h-[60px] rounded-lg relative">
+      <div className="w-full border text-right border-[#8A8A8A] h-[60px] rounded-lg relative">
         <span className="bg-white px-[20px] py-[12] text-center text-[#737373] absolute left-5 top-0 -translate-y-[50%]">
           Password
         </span>
@@ -63,7 +63,7 @@ function AdminLoginForm() {
           onChange={handleChange}
           value={formData.password}
           name="password"
-          className="w-full h-full rounded-lg px-5 mb-1"
+          className="w-full h-full  rounded-lg px-5 mb-1"
           type="password"
         />
         <img

@@ -43,7 +43,7 @@ function ProductDetail() {
   },[productId])
 
   return (
-    <div>
+    <div className="pt-[100px]">
       <Header />
       <main className="w-full flex flex-col py-20 gap-20 items-center">
         <div className="flex gap-5 w-[100%] max-w-[70%]">

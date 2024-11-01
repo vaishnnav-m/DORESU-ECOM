@@ -27,7 +27,7 @@ function Header() {
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error :{error.message}</p>;
   return (
-    <header className="h-[100px] w-full relative">
+    <header className="h-[100px] w-full fixed top-0 z-[9999]">
       <nav className="w-full h-full flex justify-between items-center lg:px-[100px] md:px-10 bg-gradient-to-b from-[#D9D9D9] to-white">
         <div className="flex justify-between">
           <div className="relative">
@@ -73,7 +73,7 @@ function Header() {
               <ul className="w-[200px] absolute z-50 top-[30px] text-center left-1/2 -translate-x-1/2 -translate-y-[30px] bg-white shadow-xl opacity-0 pointer-events-none hover:opacity-100 group-hover:translate-y-0 group-focus:translate-y-0 group-hover:opacity-100 group-focus:opacity-100 group-hover:pointer-events-auto group-focus:pointer-events-auto transition-all duration-300 ease-in-out">
                 <li className="hover:bg-[#ececec] py-2 cursor-pointer">
                   {authenticated ? (
-                    <Link>Profile</Link>
+                    <Link to="/profile">Profile</Link>
                   ) : (
                     <Link to="/signup">Sinup</Link>
                   )}
@@ -88,7 +88,7 @@ function Header() {
               </ul>
             </li>
             <li className="hover:scale-110">
-              <Link>
+              <Link to="/cart">
                 <img className="w-[25px]" src={Cart} alt="" />
               </Link>
             </li>

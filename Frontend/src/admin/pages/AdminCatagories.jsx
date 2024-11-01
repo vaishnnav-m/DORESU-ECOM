@@ -128,7 +128,7 @@ function AdminCatagories() {
   }
 
   return (
-    <div className="bg-[#E7E7E3] flex min-h-screen">
+    <div className="bg-[#E7E7E3] flex min-h-screen relative">
       <Aside />
       <main className="w-full  pl-[260px]">
         <Header />
