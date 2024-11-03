@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../components/Header";
+import ProfileForm from "../components/ProfileForm";
 
 function UserProfile() {
   return (
@@ -47,40 +48,7 @@ function UserProfile() {
         </div>
         <div className="flex flex-col items-center border px-10 py-5 flex-1">
           <h2 className="text-[20px] font-bold ">Profile Information</h2>
-          <form className="flex flex-col gap-5 w-full" action="">
-            <label className="text-18px font-semibold">Name</label>
-            <div className="flex gap-5">
-              <input
-                className="rounded border border-[#8a8a8a] px-5 py-3 w-full"
-                type="text"
-              />
-              <input
-                className="rounded border border-[#8a8a8a] px-5 py-3 w-full"
-                type="text"
-              />
-            </div>
-            <label className="text-18px font-semibold">Name</label>
-            <input
-              className="rounded border border-[#8a8a8a] px-5 py-3 w-full"
-              type="email"
-            />
-            <label className="text-18px font-semibold">Phone</label>
-            <input
-              className="rounded border border-[#8a8a8a] px-5 py-3 w-full"
-              type="text"
-            />
-            <label className="text-18px font-semibold">Password</label>
-            <input
-              className="rounded border border-[#8a8a8a] px-5 py-3 w-full"
-              type="text"
-            />
-            <button
-              type="submit"
-              className="w-full h-[55px] rounded-lg bg-black text-[27px] text-white"
-            >
-              Update
-            </button>
-          </form>
+          <ProfileForm/>
         </div>
       </main>
     </div>

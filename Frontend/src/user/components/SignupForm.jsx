@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Google from "../assets/Google.svg";
 import EyeBtn from "../assets/Group.svg";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";

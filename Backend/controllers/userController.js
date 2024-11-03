@@ -241,6 +241,26 @@ const getUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const {firstName,lastName,phone} = req.body;
+    const userData = await User.findById(req.user.id);
+    if(!userData) return res.status(404).json({message: "user not found"});
+    const newUserData = {
+      firstName,
+      lastName,
+      phone
+    }
+    await User.findByIdAndUpdate(req.user.id,newUserData);
+
+    res.json({message:"updated successfully"});
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 const logoutUser = async (req, res) => {
   try {
     const cookies = req.cookies;
@@ -265,4 +285,5 @@ module.exports = {
   refreshToken,
   getUser,
   logoutUser,
+  updateUser
 };

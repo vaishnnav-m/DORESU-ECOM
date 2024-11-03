@@ -1,5 +1,4 @@
 const Product = require("../models/productsSchema");
-const Category = require("../models/catagorySchema");
 const {HttpStatus,createResponse} = require("../utils/generateResponse");
 
 // controller to handle products adding
@@ -32,7 +31,7 @@ const addProduct = async (req, res) => {
  const getProducts = async (req,res) => {
   try {
     const filter = req?.user?.isAdmin ? {} : { isActive: true };
-
+    
     const products = await Product.find(filter).populate('category','categoryName -_id');
     if(!products || products.length === 0)
       return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND,"No products were found"));

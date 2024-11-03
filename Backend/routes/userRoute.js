@@ -19,6 +19,8 @@ user_route.get('/refresh',userController.refreshToken);
 
 user_route.get('/getUser',verifyToken,userController.getUser);
 
+user_route.put('/updateUser',verifyToken,userController.updateUser);
+
 user_route.post('/logout',verifyToken,userController.logoutUser);
 
 user_route.get('/getProducts',productController.getProducts);
