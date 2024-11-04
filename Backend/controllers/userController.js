@@ -39,7 +39,6 @@ const postSignup = async (req, res) => {
         .json({ message: "User already exists with this email" });
 
     const hashedPassword = await hashPassword(req.body.password);
-
     const user = new User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -261,6 +260,32 @@ const updateUser = async (req, res) => {
   }
 }
 
+const resetPassword = async (req,res) => {
+  try {
+    const {userId,oldPassword,newPassword} = req.body;
+
+    const userData = await User.findById(userId);
+    if(!userData) return res.status(404).json({message: "user not found"});
+
+    const isPasswordMatch = await bcrypt.compare(
+      oldPassword,
+      userData.password
+    );
+
+    if (!isPasswordMatch)
+      return res.status(401).json({ message: "Incorrect password"});
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await User.findByIdAndUpdate(userId,{password:hashedPassword});
+    res.json({message:"Successfully updated password"});
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 const logoutUser = async (req, res) => {
   try {
     const cookies = req.cookies;
@@ -285,5 +310,6 @@ module.exports = {
   refreshToken,
   getUser,
   logoutUser,
-  updateUser
+  updateUser,
+  resetPassword
 };

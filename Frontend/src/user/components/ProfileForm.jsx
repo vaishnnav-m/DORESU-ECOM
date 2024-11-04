@@ -4,10 +4,13 @@ import {
   useUpdateUserMutation,
 } from "../../services/userProfile";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { RotatingLines } from "react-loader-spinner";
 
 function ProfileForm() {
   const { data: user, isLoading, error: userError } = useGetUserQuery();
   const [updateUser, { isLoading: isFormSubmitting }] = useUpdateUserMutation();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -49,6 +52,23 @@ function ProfileForm() {
        });
     }
   };
+
+  if(isLoading){
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center ">
+        <RotatingLines
+          visible={true}
+          height="96"
+          width="96"
+          strokeColor="black"
+          strokeWidth="5"
+          animationDuration="0.75"
+          ariaLabel="rotating-lines-loading"
+          wrapperClass="stroke-black"
+        />
+      </div>
+    );
+  }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
       <label className="text-18px font-semibold">Name</label>
@@ -93,10 +113,10 @@ function ProfileForm() {
           type="password"
           onChange={handleChange}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2 items-center cursor-pointer">
+        <button type="button" onClick={() => navigate(`/profile/resetPassword/${user._id}`)} className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2 items-center cursor-pointer">
           <i className="fas fa-pen text-[14px] "></i>
           <span>Edit</span>
-        </div>
+        </button>
       </div>
       <button
         type="submit"

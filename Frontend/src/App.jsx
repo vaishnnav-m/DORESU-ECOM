@@ -35,6 +35,9 @@ import AdminEditProduct from "./admin/pages/AdminEditProduct";
 import AllProducts from "./user/pages/AllProducts";
 import CartPage from "./user/pages/CartPage";
 import UserProfile from "./user/pages/UserProfile";
+import ResetPassword from "./user/pages/ResetPassword";
+import Address from "./user/pages/Address";
+import AddAddress from "./user/pages/AddAddress";
 
 function App() {
   const dispatch = useDispatch();
@@ -125,6 +128,33 @@ function App() {
           element={
             <ProtectedRoutes>
               <UserProfile />
+            </ProtectedRoutes>
+          }
+        />
+        {/* user Reset page */}
+        <Route
+          path="/profile/resetPassword/:userId"
+          element={
+            <ProtectedRoutes>
+              <ResetPassword />
+            </ProtectedRoutes>
+          }
+        />
+         {/* user manage address page */}
+         <Route
+          path="/profile/address"
+          element={
+            <ProtectedRoutes>
+              <Address />
+            </ProtectedRoutes>
+          }
+        />
+         {/* user manage address page */}
+         <Route
+          path="/profile/addAddress"
+          element={
+            <ProtectedRoutes>
+              <AddAddress/>
             </ProtectedRoutes>
           }
         />

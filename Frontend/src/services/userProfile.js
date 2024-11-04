@@ -16,8 +16,16 @@ export const userProfileApi = api.injectEndpoints({
         body: credentials,
       }),
     }),
+    // mutation to reset password
+    resetPassword: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/resetPassword",
+        method: "PATCH",
+        body: credentials,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetUserQuery, useUpdateUserMutation } = userProfileApi;
+export const { useGetUserQuery, useUpdateUserMutation, useResetPasswordMutation } = userProfileApi;
