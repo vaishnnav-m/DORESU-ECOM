@@ -17,9 +17,9 @@ function GoogleAuth() {
         position: "top-right",
         theme: "dark",
       });
+      localStorage.setItem('userToken',data.data);
       dispatch(setCredentials(data.data))
     }
-
   },[data])
 
   if(isError){

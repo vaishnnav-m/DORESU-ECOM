@@ -53,6 +53,7 @@ function OtpForm() {
         if(response.status === 200){
           setOtp("");
           setError("");
+          localStorage.setItem('userToken',response.accessToken);
           dispatch(setCredentials(response.accessToken));
         }
         return navigate("/");

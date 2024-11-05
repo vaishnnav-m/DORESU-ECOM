@@ -18,7 +18,6 @@ const addProduct = async (req, res) => {
      });
  
      await productData.save();
-     console.log("saved",productData);
      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"Product added Successfully"));
  
    } catch (error) {

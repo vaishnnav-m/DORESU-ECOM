@@ -35,7 +35,7 @@ const google_authentication = async (req, res) => {
       const accessToken = jwt.sign(
         { id: newUser._id },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "30m" }
+        { expiresIn: "5m" }
       );
 
       // generating refresh token

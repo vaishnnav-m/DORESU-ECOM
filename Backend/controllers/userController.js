@@ -92,7 +92,7 @@ const verifyOtp = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30m" }
+      { expiresIn: "5m" }
     );
 
     // generating refresh token
@@ -174,7 +174,7 @@ const postLogin = async (req, res) => {
     const accessToken = jwt.sign(
       { id: userData._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30m" }
+      { expiresIn: "5m" }
     );
 
     // generating refresh token
@@ -218,7 +218,7 @@ const refreshToken = (req, res) => {
         const accessToken = jwt.sign(
           { id: userData._id, isAdmin:true },
           process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "30m" }
+          { expiresIn: "5m" }
         );
         res.json({ accessToken });
       } catch (error) {

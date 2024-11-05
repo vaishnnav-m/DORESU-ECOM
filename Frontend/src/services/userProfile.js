@@ -24,8 +24,56 @@ export const userProfileApi = api.injectEndpoints({
         body: credentials,
       }),
     }),
+    // mutation to reset password
+    addAddress: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/addAddress",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    // query to get addresses
+    getAddresses: builder.query({
+      query: () => ({
+        url: "/api/getAddresses",
+      }),
+      providesTags:["getAddresses"]
+    }),
+    // mutation to update default address
+    updateDefaultAddress: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/updateDefaultAddress",
+        method: "PATCH",
+        body: credentials,
+      }),
+      invalidatesTags:["getAddresses"]
+    }),
+    // query to get addresses
+    getOneAddress: builder.query({
+      query: (addressId) => ({
+        url: `/api/getOneAddress/${ addressId }`,
+      }),
+      providesTags:["getAddresses"]
+    }),
+    updateAddress: builder.mutation({
+      query: (credentials) => ({
+        url: "/api/updateAddress",
+        method: "PUT",
+        body: credentials,
+      }),
+      invalidatesTags:["getAddresses"]
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetUserQuery, useUpdateUserMutation, useResetPasswordMutation } = userProfileApi;
+export const {
+  useGetUserQuery,
+  useUpdateUserMutation,
+  useResetPasswordMutation,
+  useAddAddressMutation,
+  useGetAddressesQuery,
+  useUpdateDefaultAddressMutation,
+  useGetOneAddressQuery,
+  useUpdateAddressMutation
+} = userProfileApi;

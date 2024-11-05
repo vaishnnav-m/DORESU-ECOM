@@ -6,11 +6,13 @@ import Search from "../assets/Vector.svg";
 import Tshirt from "../assets/black-t-shirt-is-hanging-hanger-with-word-dope-it_1340-38184-removebg-preview.png";
 import "./header.css";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLogoutUserMutation } from "../../services/authApi";
+import { logOut } from "../../store/authSlice";
 
 function Header() {
   const [authenticated, setAuthenticated] = useState();
+  const dispatch = useDispatch();
   // selecter for user authenticated
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   // logout mutation hook
@@ -22,6 +24,7 @@ function Header() {
   }, [isAuthenticated]);
 
   function handleLogout() {
+    dispatch(logOut());
     return logoutUser();
   }
   if (isLoading) return <p>Loading...</p>;

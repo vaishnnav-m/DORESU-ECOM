@@ -23,6 +23,7 @@ function LoginForm() {
       e.preventDefault();
       const response = await loginUser(formData).unwrap();
       if (response && response.accessToken) {
+        localStorage.setItem("userToken",response.accessToken);
         dispatch(setCredentials(response.accessToken));
         return navigate("/");
       }

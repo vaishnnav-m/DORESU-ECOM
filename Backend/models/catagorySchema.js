@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const categorySchema = mongoose.Schema({
    categoryName:{
       type:String,
-      require:true
+      required:true
    },
    description:{
       type:String,
-      require:true
+      required:true
    },
    isActive:{
       type:Boolean,
