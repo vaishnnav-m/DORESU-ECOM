@@ -29,9 +29,15 @@ const addProduct = async (req, res) => {
  // controller to get products
  const getProducts = async (req,res) => {
   try {
+    // pagination logic
+    const { offset = 0, limit = 10} = req.query;
+    const maxLimit = 20;
+    const effectiveOffset = Math.max(Number(offset),0);
+    const effectiveLimit = Math.min(Number(limit),maxLimit); 
+
     const filter = req?.user?.isAdmin ? {} : { isActive: true };
     
-    const products = await Product.find(filter).populate('category','categoryName -_id');
+    const products = await Product.find(filter).populate('category','categoryName -_id').skip(effectiveOffset).limit(effectiveLimit);
     if(!products || products.length === 0)
       return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND,"No products were found"));
 

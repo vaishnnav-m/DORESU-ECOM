@@ -4,8 +4,8 @@ export const userProductsApi = api.injectEndpoints({
    endpoints:builder => ({
       // query to get produts
       getProuducts:builder.query({
-         query:() => ({
-            url:'/api/getProducts'
+         query:({ offset, limit }) => ({
+            url:`/api/getProducts?offset=${offset}&limit=${limit}`
          })
       }),
       getProduct:builder.query({
@@ -17,4 +17,4 @@ export const userProductsApi = api.injectEndpoints({
    overrideExisting:false
 });
 
-export const { useGetProuductsQuery, useGetProductQuery } = userProductsApi;
+export const { useLazyGetProuductsQuery, useGetProductQuery } = userProductsApi;

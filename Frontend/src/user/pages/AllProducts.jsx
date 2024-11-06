@@ -6,7 +6,7 @@ function AllProducts() {
   return (
     <>
       <Header />
-      <main className="w-full flex px-5 pt-20 justify-center">
+      <main className="w-full flex px-5 pt-36 justify-center">
         <div className="w-[15%] ">
           <h2 className="text-[20px] font-bold">Filter by categories</h2>
           <form

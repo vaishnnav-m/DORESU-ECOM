@@ -1,25 +1,84 @@
-import cardImg from "../assets/image (1).jpg";
 import stars from "../assets/stars.svg";
 import cart from "../assets/Shopping cart.svg";
-import { useGetProuductsQuery } from "../../services/userProductsApi";
-import { useEffect } from "react";
+import { useLazyGetProuductsQuery } from "../../services/userProductsApi";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 function Products() {
+  // states
+  const limit = 8;
+  const [hasMore,setHasMore] = useState(true);
+  const [products,setProducts] = useState([]);
+  const [isIntersecting,setIsIntersecting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
   // query to fetch products
-  const {
-    data: products,
-    isLoading: isProductsLoading,
-    isSuccess: isProductsSuccess,
-    isError: isProductsError,
-    error: productsError,
-  } = useGetProuductsQuery();
+  const [getProuducts,{isSuccess: isProductsSuccess,}] = useLazyGetProuductsQuery();
+
+  // reference to know end 
+  const endRef = useRef(null);
+  const offset = useRef(0);
+
+  async function fetchProducts(offsetValue = offset.current){
+    try {
+      if (isLoading || !hasMore) return;
+      setIsLoading(true);
+      const response = await getProuducts({  offset: offsetValue, limit }).unwrap();
+
+      if(response){
+        setProducts((prev) => {
+          const newProducts = [...prev,...response.data];
+
+          // checking is there more products
+          if(response.data.length < limit){
+            setHasMore(false)
+          }
+          return newProducts
+        });
+        offset.current += limit;
+      }
+    } catch (error) {
+      setHasMore(false);
+    }finally {
+      setIsLoading(false); // Reset loading state after fetch is complete
+    }
+  }
+
+  // useEffect to fetch products
+  useEffect(() => {
+    setProducts([]);
+    fetchProducts();
+  },[]);
+
+
+  useEffect(() => {
+    const observer = new IntersectionObserver( ([entry]) => {
+      setIsIntersecting(entry.isIntersecting);      
+    },{ threshold:1 }
+  );
+
+    if(endRef.current)
+      observer.observe(endRef.current)
+
+    return () => {
+      if(endRef.current)
+        observer.unobserve(endRef.current);
+    }
+
+  },[endRef])
+
+  useEffect(() => {
+    if(isIntersecting && hasMore){
+      fetchProducts(offset.current);
+    }
+  },[isIntersecting])
+  
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-4 gap-5 py-8 text-[25px]">
         {isProductsSuccess &&
-          products.data.map((product) => {
+          products.map((product) => {
             return (
               <Link to={`/productDetail/${product._id}`}  key={product._id}>
                 <div
@@ -61,6 +120,7 @@ function Products() {
             );
           })}
       </div>
+      {hasMore && <div ref={endRef}>Loading...</div>}
     </div>
   );
 }
