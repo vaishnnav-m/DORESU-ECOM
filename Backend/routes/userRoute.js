@@ -5,6 +5,7 @@ const productController = require('../controllers/productController')
 const verifyToken = require('../middlewares/tokenCheck');
 const googleAuthController = require('../controllers/googleAuthController');
 const addressController = require('../controllers/addressController');
+const cartController = require('../controllers/cartController');
 
 user_route.post('/signup',userController.postSignup);
 
@@ -39,5 +40,13 @@ user_route.patch('/updateDefaultAddress',verifyToken,addressController.updateIsD
 user_route.get('/getOneAddress/:addressId',verifyToken,addressController.getOneAddress)
 
 user_route.put('/updateAddress',verifyToken,addressController.updateAddress);
+
+user_route.post('/addToCart',verifyToken,cartController.addCart);
+
+user_route.get('/getCart',verifyToken,cartController.getCart);
+
+user_route.patch('/updateCart',verifyToken,cartController.updateCart);
+
+user_route.delete('/removeCartProduct',verifyToken,cartController.removePrdctCart);
 
 module.exports = user_route;

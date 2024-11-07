@@ -13,8 +13,8 @@ const cartSchema = new mongoose.Schema({
         ref: "products",
         required: true,
       },
-      variantId: {
-        type: mongoose.Schema.Types.ObjectId,
+      size: {
+        type: String,
         required: true,
       },
       quantity: {
@@ -25,13 +25,17 @@ const cartSchema = new mongoose.Schema({
       price: {
         type: Number,
         required: true,
-      },
-      totalPrice:{
-         type:Number,
-         required:true
       }
     },
   ],
+  totalPrice:{
+   type:Number,
+   required:true
+  },
+  totalQuantity:{
+   type:Number,
+   required:true,
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("cart", cartSchema);

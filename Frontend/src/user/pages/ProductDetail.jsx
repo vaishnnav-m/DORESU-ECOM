@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import ReactImageMagnify from "react-image-magnify";
 import Header from "../components/Header";
 import stars from "../assets/stars.svg";
-import { useGetProductQuery } from "../../services/userProductsApi";
+import { useAddToCartMutation, useGetProductQuery } from "../../services/userProductsApi";
 import "./pageStyles.css";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import Products from "../components/Products";
 
 function ProductDetail() {
@@ -13,14 +14,15 @@ function ProductDetail() {
   const { data: product } = useGetProductQuery(productId);
   const [productData, setProductData] = useState(null);
   const [mainImage, setMainImage] = useState(null);
+  const [selectedVarientIndex,setSelctedVarientIndex] = useState(0);
+  const [addToCart] = useAddToCartMutation();
+
   useEffect(() => {
     if (product && product.data) {
-      console.log("Product Data", product.data);
       setProductData(product?.data);
       setMainImage(product.data.gallery[0].url);
     }
   }, [product]);
-
   const getShortenedSize = (size) => {
     switch (size.toLowerCase()) {
       case "medium":
@@ -36,11 +38,30 @@ function ProductDetail() {
     }
   };
 
+  // to fix the scroll bug 
   useEffect(() => {
-
     window.scrollTo(0,0)
-
   },[productId])
+
+
+  const handleCart = async () => {
+    try {
+      const response = await addToCart({productId,size:productData.variants[selectedVarientIndex].size,quantity:1}).unwrap();
+      if(response){
+        toast.success(response.message, {
+          position: "top-right",
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data.message,{
+        position: "top-right",
+        theme: "dark",
+      })
+      console.log('kjgh')
+    }
+  }
 
   return (
     <div className="pt-[100px]">
@@ -86,42 +107,28 @@ function ProductDetail() {
               </div>
               <div className="w-full flex gap-5 text-20px] font-bold">
                 <button
-                  disabled={productData?.variants[0].stock === 0}
+                  onClick={handleCart}
+                  disabled={productData?.variants[selectedVarientIndex].stock === 0}
                   className="w-full py-4 border border-black flex gap-3 justify-center items-center rounded-xl"
                 >
                   <i className="fas fa-cart-shopping"></i>Add to Cart
                 </button>
                 <button
-                  disabled={productData?.variants[0].stock === 0}
+                  disabled={productData?.variants[selectedVarientIndex].stock === 0}
                   className="w-full py-4 bg-black text-white rounded-xl"
                 >
                   Buy Now
                 </button>
               </div>
-              {productData?.variants[0].stock === 0 && (
+              {productData?.variants[selectedVarientIndex].stock === 0 && (
                 <span className="text-red-500 text-[20px]">out of stock</span>
               )}
-              {productData?.variants[0].stock <= 10 &&
-                productData?.variants[0].stock > 0 && (
+              {productData?.variants[selectedVarientIndex].stock <= 10 &&
+                productData?.variants[selectedVarientIndex].stock > 0 && (
                   <span className="text-red-400 text-[20px]">
-                    {productData?.variants[0].stock} left hurry !
+                    {productData?.variants[selectedVarientIndex].stock} left hurry !
                   </span>
                 )}
-
-              {/* for color section */}
-              {/* <div className="pt-5">
-                <h2 className="text-[18px]">Similar Products</h2>
-                <div className="flex justify-between gap-2">
-                  {productData?.gallery.map((product, index) => (
-                    <div
-                      className="max-w-[200px] max-h-[200px] border"
-                      key={index}
-                    >
-                      <img className="w-full h-full" src={product.url} alt="" />
-                    </div>
-                  ))}
-                </div>
-              </div> */}
             </div>
           </div>
           <div className="flex-1 flex items-center flex-col gap-5">
@@ -133,7 +140,7 @@ function ProductDetail() {
                 {productData?.productName}
               </span>
               <h2 className="text-[32px] font-bold">
-                ₹ {productData?.variants[0].price}
+                ₹ {productData?.variants[selectedVarientIndex].price}
               </h2>
               <div className="flex gap-2 items-center">
                 <img src={stars} alt="" />
@@ -150,12 +157,14 @@ function ProductDetail() {
               <div className="flex gap-3">
                 {productData?.variants.map((variant, index) => {
                   return (
-                    <span
+                    <button
+                      onClick={() => setSelctedVarientIndex(index)}
                       key={index}
+                      style={selectedVarientIndex === index ? { backgroundColor: "#e9e9e9", border:"1px solid" } : {}}
                       className="w-fit p-5 border border-[#b8b8b8] rounded-xl"
                     >
                       {getShortenedSize(variant.size)}
-                    </span>
+                    </button>
                   );
                 })}
               </div>
