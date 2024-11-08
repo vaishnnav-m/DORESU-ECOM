@@ -3,14 +3,20 @@ import UserProfileAside from "../components/UserProfileAside";
 import Header from "../components/Header";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useGetAddressesQuery, useUpdateDefaultAddressMutation } from "../../services/userProfile";
-
+import {
+  useDeleteAddressMutation,
+  useGetAddressesQuery,
+  useUpdateDefaultAddressMutation,
+} from "../../services/userProfile";
 
 function Address() {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useGetAddressesQuery();
-  const [updateDefaultAddress,{data:updateData}] = useUpdateDefaultAddressMutation();
+  const [updateDefaultAddress, { data: updateData }] =
+    useUpdateDefaultAddressMutation();
+  const [deleteAddress] = useDeleteAddressMutation();
   const [addresses, setAddresses] = useState([]);
+
 
   useEffect(() => {
     if (data) {
@@ -22,9 +28,9 @@ function Address() {
   const handleIsDefault = async (addressId) => {
     try {
       console.log(addressId);
-      const response = await updateDefaultAddress({addressId}).unwrap();
+      const response = await updateDefaultAddress({ addressId }).unwrap();
       if (response) {
-        toast.success("Address added successfully", {
+        toast.success("Address updated successfully", {
           position: "top-right",
           theme: "dark",
         });
@@ -36,7 +42,25 @@ function Address() {
         theme: "dark",
       });
     }
+  };
 
+  const handleDelete = async (addressId) => {
+    try {
+      const response = deleteAddress({addressId}).unwrap();
+      if (response) {
+        toast.success("Address deleted successfully", {
+          position: "top-right",
+          theme: "dark",
+        });
+        refetch();
+      }
+      
+    } catch (error) {
+      toast.error("Unexpected error", {
+        position: "top-right",
+        theme: "dark",
+      });
+    }
   }
 
   return (
@@ -55,7 +79,10 @@ function Address() {
             </button>
           </div>
           {addresses.map((address) => (
-            <div key={address._id} className="w-full px-10 py-5 border-2 rounded-lg flex flex-col gap-5">
+            <div
+              key={address._id}
+              className="w-full px-10 py-5 border-2 rounded-lg flex flex-col gap-5"
+            >
               {address.isDefault && (
                 <h2 className="text-[18px] font-semibold">Default Address</h2>
               )}
@@ -67,7 +94,7 @@ function Address() {
                     {address.houseName +
                       "," +
                       address.street +
-                      ","+
+                      "," +
                       address.city +
                       "," +
                       address.district +
@@ -80,14 +107,26 @@ function Address() {
               </div>
               <div className="flex gap-5 justify-end">
                 {!address.isDefault && (
-                  <button onClick={() => handleIsDefault(address._id)} className="px-5 py-3 border rounded-lg">
+                  <button
+                    onClick={() => handleIsDefault(address._id)}
+                    className="px-5 py-3 border rounded-lg"
+                  >
                     Set As Default
                   </button>
                 )}
-                <button onClick={() => navigate(`/profile/editAddress/${address._id}`)} className="px-5 py-3 border rounded-lg">Edit</button>
-                <button className="px-5 py-3 bg-black rounded-lg text-white">
-                  Delete
+                <button
+                  onClick={() =>
+                    navigate(`/profile/editAddress/${address._id}`)
+                  }
+                  className="px-5 py-3 border rounded-lg"
+                >
+                  Edit
                 </button>
+                {!address.isDefault && (
+                  <button onClick={() => handleDelete(address._id)} className="px-5 py-3 bg-black rounded-lg text-white">
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           ))}

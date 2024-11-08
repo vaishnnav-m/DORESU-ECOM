@@ -157,7 +157,7 @@ function CartPage() {
           <span className="text-[25px] font-semibold">
             Sub Total ({cartData.totalQuantity} item):{cartData.totalPrice}
           </span>
-          <button className="bg-black text-white px-5 text-2xl py-2 rounded-lg">
+          <button onClick={() => navigate('/payment')} className="bg-black text-white px-5 text-2xl py-2 rounded-lg">
             Check Out
           </button>
         </div>

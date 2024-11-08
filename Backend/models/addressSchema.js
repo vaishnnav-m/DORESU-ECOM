@@ -44,6 +44,10 @@ const addressSchema = mongoose.Schema({
    isDefault:{
       type:Boolean,
       default:false
+   },
+   isDeleted:{
+      type:Boolean,
+      default:false
    }
 },{ timestamps: true })
 

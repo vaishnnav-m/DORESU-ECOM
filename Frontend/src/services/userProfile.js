@@ -37,7 +37,7 @@ export const userProfileApi = api.injectEndpoints({
       query: () => ({
         url: "/api/getAddresses",
       }),
-      providesTags:["getAddresses"]
+      providesTags: ["getAddresses"],
     }),
     // mutation to update default address
     updateDefaultAddress: builder.mutation({
@@ -46,14 +46,14 @@ export const userProfileApi = api.injectEndpoints({
         method: "PATCH",
         body: credentials,
       }),
-      invalidatesTags:["getAddresses"]
+      invalidatesTags: ["getAddresses"],
     }),
     // query to get addresses
     getOneAddress: builder.query({
       query: (addressId) => ({
-        url: `/api/getOneAddress/${ addressId }`,
+        url: `/api/getOneAddress/${addressId}`,
       }),
-      providesTags:["getAddresses"]
+      providesTags: ["getAddresses"],
     }),
     updateAddress: builder.mutation({
       query: (credentials) => ({
@@ -61,7 +61,14 @@ export const userProfileApi = api.injectEndpoints({
         method: "PUT",
         body: credentials,
       }),
-      invalidatesTags:["getAddresses"]
+      invalidatesTags: ["getAddresses"],
+    }),
+    deleteAddress: builder.mutation({
+      query: (addressId) => ({
+        url: "/api/deleteAddress",
+        method: "DELETE",
+        body: addressId,
+      }),
     }),
   }),
   overrideExisting: false,
@@ -75,5 +82,6 @@ export const {
   useGetAddressesQuery,
   useUpdateDefaultAddressMutation,
   useGetOneAddressQuery,
-  useUpdateAddressMutation
+  useUpdateAddressMutation,
+  useDeleteAddressMutation
 } = userProfileApi;

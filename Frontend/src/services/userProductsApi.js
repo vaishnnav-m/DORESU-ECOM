@@ -38,6 +38,13 @@ export const userProductsApi = api.injectEndpoints({
         method:'DELETE',
         body:credentials
       }),
+    }),
+    placeOrder:builder.mutation({
+      query:credentials => ({
+        url:'/api/placeOrder',
+        method:"POST",
+        body:credentials
+      })
     })
   }),
   overrideExisting: false,
@@ -49,5 +56,6 @@ export const {
   useAddToCartMutation,
   useGetCartQuery,
   useUpdateCartMutation,
-  useRemoveCartProductMutation
+  useRemoveCartProductMutation,
+  usePlaceOrderMutation
 } = userProductsApi;

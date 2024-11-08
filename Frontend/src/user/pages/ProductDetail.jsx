@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactImageMagnify from "react-image-magnify";
 import Header from "../components/Header";
 import stars from "../assets/stars.svg";
@@ -16,6 +16,8 @@ function ProductDetail() {
   const [mainImage, setMainImage] = useState(null);
   const [selectedVarientIndex,setSelctedVarientIndex] = useState(0);
   const [addToCart] = useAddToCartMutation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (product && product.data) {
@@ -48,10 +50,7 @@ function ProductDetail() {
     try {
       const response = await addToCart({productId,size:productData.variants[selectedVarientIndex].size,quantity:1}).unwrap();
       if(response){
-        toast.success(response.message, {
-          position: "top-right",
-          theme: "dark",
-        });
+        navigate('/cart')
       }
     } catch (error) {
       console.log(error);
@@ -59,7 +58,6 @@ function ProductDetail() {
         position: "top-right",
         theme: "dark",
       })
-      console.log('kjgh')
     }
   }
 

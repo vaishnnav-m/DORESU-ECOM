@@ -28,6 +28,8 @@ import ResetPassword from "./user/pages/ResetPassword";
 import Address from "./user/pages/Address";
 import AddAddress from "./user/pages/AddAddress";
 import EditAddress from "./user/pages/EditAddress";
+import PaymentPage from "./user/pages/PaymentPage";
+import OrderSuccess from "./user/pages/OrderSuccess";
 
 function App() {
   return (
@@ -76,6 +78,24 @@ function App() {
             element={
               <ProtectedRoutes>
                 <CartPage />
+              </ProtectedRoutes>
+            }
+          />
+          {/* payment page */}
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoutes>
+                <PaymentPage />
+              </ProtectedRoutes>
+            }
+          />
+          {/* payment page */}
+          <Route
+            path="/success"
+            element={
+              <ProtectedRoutes>
+                <OrderSuccess />
               </ProtectedRoutes>
             }
           />

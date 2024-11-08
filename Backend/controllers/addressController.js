@@ -4,7 +4,7 @@ const {HttpStatus,createResponse} = require("../utils/generateResponse");
 const addAddress = async (req,res) => {
    try {
       const {name,mobile,pincode,houseName,landmark,city,district,street,state} = req.body;
-      const addresses = await Address.find({userId:req.user.id})
+      const addresses = await Address.find({userId:req.user.id,isDeleted:false})
       let isDefault = false;
       if(!addresses?.length){
          isDefault = true;
@@ -33,7 +33,7 @@ const addAddress = async (req,res) => {
 
 const getAddress = async (req,res) => {
    try {
-      const addresses = await Address.find({userId:req.user.id})
+      const addresses = await Address.find({userId:req.user.id,isDeleted:false})
       if(!addresses)
          return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND,"No addresses found"));
 
@@ -117,10 +117,30 @@ const updateAddress = async (req,res) => {
    }
 }
 
+const deleteAddress = async (req,res) => {
+   try {
+
+      const {addressId} = req.body;
+
+      const addressData = await Address.findById(addressId);
+      if(!addressData)
+         return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND, "Address not found"));
+
+      await Address.findByIdAndUpdate(addressId,{isDeleted:true});
+
+      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"Address Deleted successfully"));
+      
+   } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
+   }
+}
+
 module.exports = {
    addAddress,
    getAddress,
    updateIsDefault,
    updateAddress,
-   getOneAddress
+   getOneAddress,
+   deleteAddress
 }
