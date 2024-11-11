@@ -4,7 +4,7 @@ import Aside from "../components/Aside";
 import Table from "../components/Table";
 import { useNavigate } from "react-router-dom";
 import {
-  useGetProdutsQuery,
+  useLazyGetProdutsQuery,
   useUpdateProductStatusMutation,
 } from "../../services/adminFethApi";
 import { toast } from "react-toastify";
@@ -14,9 +14,32 @@ function AdminProducts() {
   const navigate = useNavigate();
   // hooks for mutation and query
   const [updateProductStatus] = useUpdateProductStatusMutation();
-  const { data } = useGetProdutsQuery();
+  const [getProducts] = useLazyGetProdutsQuery();
   // states
   const [modal, setModal] = useState(false);
+  const [data, setData] = useState([]);
+  const [offset, setOffsetValue] = useState(0);
+  const [hasMore,setHasMore] = useState(true);
+
+  const fetchProducts = async () => {
+    try {
+      const limit = 4;
+      const products = await getProducts({ offset, limit }).unwrap();
+      if (products) setData(products.data);
+      if(products.data.length < limit){
+        setHasMore(false)
+      }else{
+        setHasMore(true)
+      }
+    } catch (error) {
+      setHasMore(false)
+    }
+  };
+  console.log("data", data);
+  useEffect(() => {
+    fetchProducts();
+  }, [offset,fetchProducts]);
+
   // for table
   const headings = [
     "Images",
@@ -37,16 +60,21 @@ function AdminProducts() {
   // for modal
   const [modalHeading, setModalHeading] = useState("");
   const [modalText, setModalText] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState({id:null,isActive:null});
+  const [selectedProduct, setSelectedProduct] = useState({
+    id: null,
+    isActive: null,
+  });
   const [buttonConfigsModal, setButtonCofigsModal] = useState([]);
 
   // function to handle modal
   const handleModal = ({ _id, isActive }) => {
     setSelectedProduct({ id: _id, isActive: isActive });
-    
+
     if (isActive) {
       setModalHeading("Unpublish Product");
-      setModalText("Are you sure to deactivate this product? If you deactivate it, users can't see the product.");
+      setModalText(
+        "Are you sure to deactivate this product? If you deactivate it, users can't see the product."
+      );
       setButtonCofigsModal([
         {
           name: "Cancel",
@@ -61,7 +89,9 @@ function AdminProducts() {
       ]);
     } else {
       setModalHeading("Publish Product");
-      setModalText("Are you sure to activate this product? If you activate it, users can see the product.");
+      setModalText(
+        "Are you sure to activate this product? If you activate it, users can see the product."
+      );
       setButtonCofigsModal([
         {
           name: "Cancel",
@@ -75,11 +105,15 @@ function AdminProducts() {
         },
       ]);
     }
-  
+
     setModal(true);
   };
 
-  const mainIcon = selectedProduct.isActive ? <i className="fas fa-x text-3xl text-red-500"></i>:<i className="fas fa-check text-3xl text-green-500"></i>
+  const mainIcon = selectedProduct.isActive ? (
+    <i className="fas fa-x text-3xl text-red-500"></i>
+  ) : (
+    <i className="fas fa-check text-3xl text-green-500"></i>
+  );
 
   const buttonConfigs = [
     {
@@ -123,22 +157,21 @@ function AdminProducts() {
   function handleEdit(product) {
     navigate(`/admin/editProduct/${product._id}`);
   }
-  const [updatedData,setUpdatedData] = useState([]);
+  const [updatedData, setUpdatedData] = useState([]);
   useEffect(() => {
-    if(data){
-      const mappedData = data.data.map((item) => ({
-        _id:item._id,
+    if (data) {
+      const mappedData = data.map((item) => ({
+        _id: item._id,
         productName: item.productName,
         description: item.description,
-        stock: item.variants[0]?.stock || 0,  
+        stock: item.variants[0]?.stock || 0,
         price: item.variants[0]?.price || 0,
-        isActive:item.isActive,
-        gallery:item.gallery
+        isActive: item.isActive,
+        gallery: item.gallery,
       }));
-      setUpdatedData(mappedData)
+      setUpdatedData(mappedData);
     }
-  },[data])
-
+  }, [data]);
 
   return (
     <div className="bg-[#E7E7E3] flex min-h-screen relative">
@@ -153,7 +186,7 @@ function AdminProducts() {
             </span>
           </div>
         </div>
-        <div className="p-10 pt-[136px]">
+        <div className="p-10">
           <Table
             pageName={"Product Management"}
             data={updatedData}
@@ -163,6 +196,13 @@ function AdminProducts() {
             imageConfigs={true}
             mainButton={mainButton}
           />
+          <div className="flex justify-center pt-2">
+            <div className="bg-white">
+              <button className={`px-5 py-2 border-[2px] ${!offset && "hidden"}`} onClick={() => setOffsetValue((prev) => prev-4)}><i className="fas fa-arrow-left"/></button>
+              <button className="px-5 py-2 border-[2px]">{(offset/4)+1}</button>
+              <button className={`px-5 py-2 border-[2px] ${!hasMore && "hidden"}`} onClick={() => setOffsetValue((prev) => prev+4)}><i className="fas fa-arrow-right"/></button>
+            </div>
+          </div>
         </div>
       </main>
       {modal && (

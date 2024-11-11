@@ -32,6 +32,7 @@ const addProduct = async (req, res) => {
     // pagination logic
     const { offset = 0, limit = 10} = req.query;
     const maxLimit = 20;
+    console.log(limit);
     const effectiveOffset = Math.max(Number(offset),0);
     const effectiveLimit = Math.min(Number(limit),maxLimit); 
 

@@ -50,7 +50,6 @@ function Products() {
     fetchProducts();
   },[]);
 
-
   useEffect(() => {
     const observer = new IntersectionObserver( ([entry]) => {
       setIsIntersecting(entry.isIntersecting);      

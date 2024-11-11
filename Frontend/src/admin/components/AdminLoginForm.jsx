@@ -22,6 +22,7 @@ function AdminLoginForm() {
         const response = await loginUser(formData).unwrap();
         console.log("response is:",response);
         if (response && response.accessToken) {
+          localStorage.setItem("adminToken",response.accessToken)
           dispatch(setAdminCredentials(response.accessToken));
           return navigate("/admin");
         } 

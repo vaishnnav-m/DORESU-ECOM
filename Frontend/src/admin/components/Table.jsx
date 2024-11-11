@@ -45,12 +45,12 @@ function Table({
           {data ? (
             data.map((row) => {
               return (
-                <tr key={row._id} className="px-6 py-4 whitespace-nowrap">
+                <tr key={row._id} className="px-6 py-4 ">
                   {imageConfigs && (
-                    <td className="px-8 py-4 whitespace-nowrap">
-                      <div className="w-[100px]">
+                    <td className="px-8 py-4 ">
+                      <div className="max-w-[100px] h-[100px]">
                         <img
-                          className="w-full object-cover"
+                          className="w-full h-full object-cover"
                           src={row.gallery[0]}
                           alt=""
                         />
@@ -60,7 +60,7 @@ function Table({
                   {columns.map((col, index) => (
                     <td
                       key={index}
-                      className="px-6 py-4 whitespace-nowrap  text-wrap max-w-[100px]"
+                      className="px-6 py-4 whitespace-nowrap  max-w-[100px] truncate"
                     >
                       {row[col]}
                     </td>

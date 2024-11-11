@@ -74,8 +74,8 @@ const adminFetchApi = adminApi.injectEndpoints({
     }),
     // query to get products
     getProduts:builder.query({
-      query:() => ({
-        url:'/getProducts'
+      query:({ offset, limit }) => ({
+        url:`/getProducts?offset=${offset}&limit=${limit}`
       }),
       providesTags: ["getProducts"]
     }),
@@ -101,6 +101,20 @@ const adminFetchApi = adminApi.injectEndpoints({
         body:credentials
       }),
       invalidatesTags:['getProduct']
+    }),
+    getOrderHistories:builder.query({
+      query:() => ({
+        url:'/getOrderHistories'
+      }),
+      providesTags:['getOrders']
+    }),
+    updateOrderStatus:builder.mutation({
+      query:(credentials) => ({
+        url:'/updateOrderStatus',
+        method:'PATCH',
+        body:credentials
+      }),
+      invalidatesTags:["getOrders"]
     })
   }),
   overrideExisting: false,
@@ -116,8 +130,10 @@ export const {
   useUpdateCategoryStatusMutation,
   useUpdateCategoryMutation,
   useAddProductMutation,
-  useGetProdutsQuery,
+  useLazyGetProdutsQuery,
   useUpdateProductStatusMutation,
   useGetProductQuery,
-  useEditProductMutation
+  useEditProductMutation,
+  useGetOrderHistoriesQuery,
+  useUpdateOrderStatusMutation
 } = adminFetchApi;

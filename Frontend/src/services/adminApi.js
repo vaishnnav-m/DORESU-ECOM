@@ -13,9 +13,10 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWithReauth = async (arg, api, extraOptions) => {
-  let result = baseQuery(arg, api, extraOptions);
-  if (result?.error?.status === 401) {
+  let result = await baseQuery(arg, api, extraOptions);
+  if (result?.error?.status === 403) {
     console.log("sending admin refresh");
+    localStorage.removeItem("adminToken");
     const adminRefresh = await baseQuery(
       "/refresh",
       api,
@@ -23,10 +24,11 @@ const baseQueryWithReauth = async (arg, api, extraOptions) => {
     );
     if (adminRefresh?.data) {
       const token = adminRefresh.data.accessToken;
+      localStorage.setItem('adminToken',token);
       api.dispatch(setAdminCredentials(token));
       result = await baseQuery(arg, api, extraOptions);
     } else {
-      if (adminRefresh?.error?.status === 401) {
+      if (adminRefresh?.error?.status === 403) {
         adminRefresh.error.data.message = "Your login has expired";
       }
       return adminRefresh;

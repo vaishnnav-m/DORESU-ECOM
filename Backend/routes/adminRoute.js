@@ -3,8 +3,9 @@ const admin_route = express.Router();
 const adminController = require("../controllers/adminController");
 const categoryController = require('../controllers/categorieController')
 const productController = require('../controllers/productController');
-const verifyToken = require('../middlewares/tokenCheck')
-const upload = require('../middlewares/imageUpload')
+const orderController = require('../controllers/orderController');
+const verifyToken = require('../middlewares/tokenCheck');
+const upload = require('../middlewares/imageUpload');
 
 admin_route.post("/login", adminController.adminLogin);
 
@@ -31,5 +32,9 @@ admin_route.patch('/products/updateStatus',verifyToken,productController.updateS
 admin_route.get('/getProduct/:productId',productController.getProduct);
 
 admin_route.put('/products/editProduct',verifyToken,upload.array('file',5),productController.editProduct);
+
+admin_route.get('/getOrderHistories',verifyToken,orderController.getOrderhistories);
+
+admin_route.patch('/updateOrderStatus',verifyToken,orderController.updateOrderStatus);
 
 module.exports = admin_route;
