@@ -25,10 +25,6 @@ function CartPage() {
     try {
       const response = await updateCart({productId,newQuantity}).unwrap();
       if(response){
-        toast.success(response.message, {
-          position: "top-right",
-          theme: "dark",
-        });
         refetch();
       }
     } catch (error) {
@@ -115,7 +111,7 @@ function CartPage() {
                       </td>
                       <td className="px-8 py-4 ">
                         <span className="text-[25px] font-bold">
-                          {product.price}
+                        ₹ {product.price}
                         </span>
                       </td>
                       <td className="px-8 py-4 ">
@@ -155,7 +151,7 @@ function CartPage() {
         </div>
         <div className="border border-black flex flex-col rounded-xl gap-10 p-10">
           <span className="text-[25px] font-semibold">
-            Sub Total ({cartData.totalQuantity} item):{cartData.totalPrice}
+            Sub Total ({cartData.totalQuantity} item):₹ {cartData.totalPrice}
           </span>
           <button onClick={() => navigate('/payment')} className="bg-black text-white px-5 text-2xl py-2 rounded-lg">
             Check Out

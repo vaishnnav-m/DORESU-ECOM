@@ -20,10 +20,14 @@ function AdminOrderDetail({ order, date, address, handleModal }) {
   }
 
   // function to handle status change
-  async function handleStatus(status,itemId,orderId){    
+  async function handleStatus(status, itemId, orderId) {
     try {
-      const response = await updateOrderStatus({status,itemId,orderId}).unwrap();
-      if(response){
+      const response = await updateOrderStatus({
+        status,
+        itemId,
+        orderId,
+      }).unwrap();
+      if (response) {
         toast.success(response.message, {
           position: "top-right",
           theme: "dark",
@@ -44,7 +48,7 @@ function AdminOrderDetail({ order, date, address, handleModal }) {
       <div className="w-[70%] h-[60%] bg-white p-10 flex flex-col gap-8 relative">
         <button
           onClick={() => handleModal()}
-          className="absolute right-5 top-5 bg-black text-white rounded-full"
+          className="absolute cursor-pointer right-5 top-5 bg-black text-white rounded-full"
         >
           <i className="fas fa-x px-3 py-3" />
         </button>
@@ -76,8 +80,18 @@ function AdminOrderDetail({ order, date, address, handleModal }) {
           <tbody>
             {order.items.map((item) => (
               <tr key={item._id}>
-                <td className="px-6 py-3"></td>
-                <td className="px-6 py-3"></td>
+                <td className="px-6 py-3">
+                  <img
+                    className="h-[100px]"
+                    src={item.productId.gallery[0]}
+                    alt=""
+                  />
+                </td>
+                <td className="px-6 py-3">
+                  <div className="flex">
+                    <span className="max-w-[150px] truncate">{item.productId.productName}</span>
+                  </div>
+                </td>
                 <td className="px-6 py-3">{item.size}</td>
                 <td className="px-6 py-3">₹ {item.price}</td>
                 <td className="px-6 py-3 cursor-pointer relative group">
@@ -88,11 +102,13 @@ function AdminOrderDetail({ order, date, address, handleModal }) {
                   </span>
                   <div className="absolute z-[999] bg-white left-4 py-5 px-3 shadow-xl hidden flex-col gap-2 group-hover:flex">
                     {statuses.map(
-                      (status,index) =>
+                      (status, index) =>
                         status !== item.status && (
-                          <span 
+                          <span
                             key={index}
-                            onClick={() => handleStatus(status,item._id,order._id)}
+                            onClick={() =>
+                              handleStatus(status, item._id, order._id)
+                            }
                             className={` ${getStyle(
                               status
                             )} rounded-lg px-3 py-2`}

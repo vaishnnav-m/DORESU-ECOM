@@ -70,6 +70,11 @@ export const userProfileApi = api.injectEndpoints({
         body: addressId,
       }),
     }),
+    getUserOrderHistories:builder.query({
+      query:() => ({
+        url:'/api/getUserOrderHistories'
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -83,5 +88,6 @@ export const {
   useUpdateDefaultAddressMutation,
   useGetOneAddressQuery,
   useUpdateAddressMutation,
-  useDeleteAddressMutation
+  useDeleteAddressMutation,
+  useGetUserOrderHistoriesQuery
 } = userProfileApi;

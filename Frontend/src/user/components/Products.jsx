@@ -4,42 +4,54 @@ import { useLazyGetProuductsQuery } from "../../services/userProductsApi";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-function Products() {
+function Products({ filters, sortOption}) {
   // states
   const limit = 8;
-  const [hasMore,setHasMore] = useState(true);
-  const [products,setProducts] = useState([]);
-  const [isIntersecting,setIsIntersecting] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [isIntersecting, setIsIntersecting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // query to fetch products
-  const [getProuducts,{isSuccess: isProductsSuccess,}] = useLazyGetProuductsQuery();
 
-  // reference to know end 
+  // query to fetch products
+  const [getProuducts, { isSuccess: isProductsSuccess }] =
+    useLazyGetProuductsQuery();
+
+  // reference to know end
   const endRef = useRef(null);
   const offset = useRef(0);
 
-  async function fetchProducts(offsetValue = offset.current){
+  async function fetchProducts(offsetValue = offset.current,  currentHasMore = hasMore) {
+    if (isLoading || ! currentHasMore) return;
     try {
-      if (isLoading || !hasMore) return;
       setIsLoading(true);
-      const response = await getProuducts({  offset: offsetValue, limit }).unwrap();
+      console.log("Fetching products with:", {
+        offset: offsetValue,
+        limit,
+        category: filters.categories,
+        priceRange: filters.priceRange,
+      }); 
+      const response = await getProuducts({
+        offset: offsetValue,
+        limit,
+        category: filters.categories,
+        priceRange: filters.priceRange,
+        sortOption
+      }).unwrap();
 
-      if(response){
+      if (response) {
         setProducts((prev) => {
-          const newProducts = [...prev,...response.data];
-
+          const newProducts = [...prev, ...response.data];
           // checking is there more products
-          if(response.data.length < limit){
-            setHasMore(false)
+          if (response.data.length < limit) {
+            setHasMore(false);
           }
-          return newProducts
+          return newProducts;
         });
         offset.current += limit;
       }
     } catch (error) {
       setHasMore(false);
-    }finally {
+    } finally {
       setIsLoading(false); // Reset loading state after fetch is complete
     }
   }
@@ -47,31 +59,32 @@ function Products() {
   // useEffect to fetch products
   useEffect(() => {
     setProducts([]);
-    fetchProducts();
-  },[]);
+    offset.current = 0;
+    setHasMore(true); 
+    setIsIntersecting(false);
+    fetchProducts(offset.current,true);
+  }, [filters,sortOption]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver( ([entry]) => {
-      setIsIntersecting(entry.isIntersecting);      
-    },{ threshold:1 }
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 1 }
+    );
 
-    if(endRef.current)
-      observer.observe(endRef.current)
+    if (endRef.current) observer.observe(endRef.current);
 
     return () => {
-      if(endRef.current)
-        observer.unobserve(endRef.current);
-    }
-
-  },[endRef])
+      if (endRef.current) observer.unobserve(endRef.current);
+    };
+  }, [endRef]);
 
   useEffect(() => {
-    if(isIntersecting && hasMore){
+    if (isIntersecting && hasMore) {
       fetchProducts(offset.current);
     }
-  },[isIntersecting])
-  
+  }, [isIntersecting]);
 
   return (
     <div className="w-full">
@@ -79,11 +92,8 @@ function Products() {
         {isProductsSuccess &&
           products.map((product) => {
             return (
-              <Link to={`/productDetail/${product._id}`}  key={product._id}>
-                <div
-                 
-                  className="flex flex-col items-center max-w-[320px] py-2 px-4 shadow-md rounded-lg"
-                >
+              <Link to={`/productDetail/${product._id}`} key={product._id}>
+                <div className="flex flex-col items-center max-w-[320px] py-2 px-4 shadow-md rounded-lg">
                   <div className="w-[280px] h-[280px] rounded-xl overflow-hidden">
                     <img
                       className="w-full h-full "

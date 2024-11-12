@@ -7,6 +7,7 @@ function AllProducts() {
     categories: "All",
     priceRange: "All",
   });
+  const [sortOption,setSortOption] = useState('')
 
   const handleCategoryChange = (category) => {
     setFilters((prev) => ({
@@ -22,12 +23,12 @@ function AllProducts() {
     }));
   };
 
-  console.log(filters);
   return (
     <>
       <Header />
       <main className="w-full flex px-5 pt-36 justify-center">
         <div className="w-[15%] ">
+          {/* filter by categories */}
           <h2 className="text-[20px] font-bold">Filter by categories</h2>
           <form
             className="pl-3 flex flex-col gap-2 font-semibold text-[#484848]"
@@ -41,26 +42,8 @@ function AllProducts() {
               <input onChange={() => handleCategoryChange("Men")} checked={filters.categories.includes("Men")} className="mr-3" type="checkbox" />
               <label>Men</label>
             </div>
-            {/* ******** for future use ******** */}
-            {/* <div>
-              <input onChange={() => handleCategoryChange("All")} className="mr-3" type="checkbox" />
-              <label>Top wears</label>
-            </div>
-            <div>
-              <input onChange={() => handleCategoryChange("All")} className="mr-3" type="checkbox" />
-              <label>Bottom wears</label>
-            </div>
-            <div>
-              <input onChange={() => handleCategoryChange("All")} className="mr-3" type="checkbox" />
-              <label>Shirts</label>
-            </div>
-            <div>
-              <input onChange={() => handleCategoryChange("All")} className="mr-3" type="checkbox" />
-              <label>T-shirts</label>
-            </div> */}
-
-            {/* ************** */}
           </form>
+          {/* filter by price */}
           <h2 className="text-[20px] font-bold mt-5">Filter by price</h2>
           <form
             className="pl-3 flex flex-col gap-2 font-semibold text-[#484848]"
@@ -71,22 +54,42 @@ function AllProducts() {
               <label>All Prices</label>
             </div>
             <div>
-              <input onChange={() => handlePriceChange("< 100")} checked={filters.priceRange === "< 100"} className="mr-3" type="checkbox" />
-              <label>Under ₹ 100</label>
+              <input onChange={() => handlePriceChange("< 200")} checked={filters.priceRange === "< 200"} className="mr-3" type="checkbox" />
+              <label>Under ₹ 200</label>
             </div>
             <div>
-              <input onChange={() => handlePriceChange("100 to 500")} checked={filters.priceRange === "100 to 500"} className="mr-3" type="checkbox" />
-              <label>₹ 100 to ₹ 500</label>
+              <input onChange={() => handlePriceChange("200 to 500")} checked={filters.priceRange === "200 to 500"} className="mr-3" type="checkbox" />
+              <label>₹ 200 to ₹ 500</label>
             </div>
             <div>
-              <input onChange={() => handlePriceChange("500 to 1000")} checked={filters.priceRange === "500 to 1000"} className="mr-3" type="checkbox" />
-              <label>₹ 500 to ₹ 1000</label>
-            </div>
-            <div>
-              <input onChange={() => handlePriceChange("> 1000")} checked={filters.priceRange === "> 1000"} className="mr-3" type="checkbox" />
-              <label>Above ₹ 1000</label>
+              <input onChange={() => handlePriceChange("> 500")} checked={filters.priceRange === "> 500"} className="mr-3" type="checkbox" />
+              <label>Above ₹ 500</label>
             </div>
           </form>
+          {/* sorting area */}
+          <h2 className="text-[20px] font-bold mt-5">Sorting</h2>
+          <form
+            className="pl-3 flex flex-col gap-2 font-semibold text-[#484848]"
+            action=""
+          >
+            <div>
+              <input onChange={() => setSortOption('aA - zZ')} checked={sortOption === "aA - zZ"} className="mr-3" type="checkbox" />
+              <label>aA - zZ</label>
+            </div>
+            <div>
+              <input onChange={() => setSortOption("zZ - aA")} checked={sortOption === "zZ - aA"} className="mr-3" type="checkbox" />
+              <label>zZ - aA</label>
+            </div>
+            <div>
+              <input onChange={() => setSortOption("price low to high")} checked={sortOption === "price low to high"} className="mr-3" type="checkbox" />
+              <label>Price low to high</label>
+            </div>
+            <div>
+              <input onChange={() => setSortOption("price high to low")} checked={sortOption === "price high to low"} className="mr-3" type="checkbox" />
+              <label>Price high to low</label>
+            </div>
+          </form>
+          {/* star filter */}
           <h2 className="text-[20px] font-bold mt-5">Filter by Ratings</h2>
           <form
             className="pl-3 flex flex-col gap-2 font-semibold text-[#484848]"
@@ -149,7 +152,7 @@ function AllProducts() {
           </form>
         </div>
         <div className="max-w-[70%]">
-          <Products filters={filters} />
+          <Products filters={filters} sortOption={sortOption} />
         </div>
       </main>
     </>

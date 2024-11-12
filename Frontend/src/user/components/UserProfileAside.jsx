@@ -23,7 +23,7 @@ function UserProfileAside() {
           <i className="fas fa-address-book text-xl text-black"></i>
           <span className="font-semibold text-[20px]">Manage Addresses</span>
         </button>
-        <button className="flex items-center gap-8 cursor-pointer border-b py-5">
+        <button onClick={() => navigate('/profile/orders')} className="flex items-center gap-8 cursor-pointer border-b py-5">
           <i className="fas fa-bag-shopping text-xl text-black"></i>
           <span className="font-semibold text-[20px]">My Orders</span>
         </button>

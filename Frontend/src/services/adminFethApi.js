@@ -100,7 +100,7 @@ const adminFetchApi = adminApi.injectEndpoints({
         method:'PUT',
         body:credentials
       }),
-      invalidatesTags:['getProduct']
+      invalidatesTags:['getProduct',"userGetProductDetail"]
     }),
     getOrderHistories:builder.query({
       query:() => ({

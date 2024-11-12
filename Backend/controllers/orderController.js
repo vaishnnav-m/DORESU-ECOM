@@ -56,11 +56,25 @@ const placeOrder = async (req,res) => {
 const getOrderhistories = async (req,res) => {
    try {
       const filter = req.user.isAdmin ? {} :{userId:req.user.id};
-      const orderhistories = await Order.find(filter);
+      const orderhistories = await Order.find(filter).populate("items.productId");
       if(!orderhistories)
          return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus,"Order histories not found"));
 
-      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, 'Order histories fetched successfully',orderhistories));
+      const updatedOrderHistories = orderhistories.map((order) => {
+         order.items = order.items.map((item) => {
+           const imageUrls = item.productId.gallery.map((image) => `${req.protocol}://${req.get("host")}/uploads/products/${image}`);
+           return {
+             ...item.toObject(),
+             productId: {
+               ...item.productId.toObject(),
+               gallery: imageUrls
+             }
+           };
+         });
+         return order;
+       });
+
+      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, 'Order histories fetched successfully',updatedOrderHistories));
       
    } catch (error) {
       console.log(error);
@@ -76,7 +90,17 @@ const updateOrderStatus = async (req,res) => {
    
       if(!updatedOrder)
          return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus,"Item in the order is not found"));
-   
+
+      if(status === "Cancelled"){
+         const cancelledItem = updatedOrder.items.find(item => item._id.toString() === itemId);
+         console.log(cancelledItem);
+         if(cancelledItem){
+            await Product.updateOne({_id:cancelledItem.productId,"variants.size":cancelledItem.size},
+               { $inc: { "variants.$.stock": cancelledItem.quantity } }
+            );
+         }
+      }
+
       res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, 'Order status updated successfully')); 
    
    } catch (error) {

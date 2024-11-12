@@ -4,14 +4,15 @@ export const userProductsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // query to get produts
     getProuducts: builder.query({
-      query: ({ offset, limit }) => ({
-        url: `/api/getProducts?offset=${offset}&limit=${limit}`,
+      query: ({ offset, limit, category , priceRange,sortOption }) => ({
+        url: `/api/getProducts?offset=${offset}&limit=${limit}&category=${encodeURIComponent(category)}&priceRange=${encodeURIComponent(priceRange)}&sortOption=${sortOption}`,
       }),
-    }),
+    }),    
     getProduct: builder.query({
       query: (id) => ({
         url: `/api/getProduct/${id}`,
       }),
+      providesTags:["userGetProductDetail"]
     }),
     addToCart: builder.mutation({
       query: (credentials) => ({

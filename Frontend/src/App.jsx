@@ -30,6 +30,8 @@ import AddAddress from "./user/pages/AddAddress";
 import EditAddress from "./user/pages/EditAddress";
 import PaymentPage from "./user/pages/PaymentPage";
 import OrderSuccess from "./user/pages/OrderSuccess";
+import UserOrders from "./user/pages/UserOrders";
+import UserOrderDetails from "./user/pages/UserOrderDetails";
 
 function App() {
   return (
@@ -141,6 +143,24 @@ function App() {
             element={
               <ProtectedRoutes>
                 <EditAddress />
+              </ProtectedRoutes>
+            }
+          />
+          {/* user orders page */}
+          <Route
+            path="/profile/orders"
+            element={
+              <ProtectedRoutes>
+                <UserOrders />
+              </ProtectedRoutes>
+            }
+          />
+          {/* user order detail page */}
+          <Route
+            path="/profile/orderDetail/:orderId"
+            element={
+              <ProtectedRoutes>
+                <UserOrderDetails />
               </ProtectedRoutes>
             }
           />

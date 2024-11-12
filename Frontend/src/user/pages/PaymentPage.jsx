@@ -81,7 +81,7 @@ function PaymentPage() {
                               {product.productId.productName}
                             </span>
                             <span className="pl-[8px] font-semibold text-[20px] cursor-pointer">
-                              {product.price}
+                            ₹ {product.price}
                             </span>
                           </div>
                         </div>

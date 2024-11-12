@@ -38,7 +38,7 @@ function AdminProducts() {
   console.log("data", data);
   useEffect(() => {
     fetchProducts();
-  }, [offset,fetchProducts]);
+  }, [offset]);
 
   // for table
   const headings = [

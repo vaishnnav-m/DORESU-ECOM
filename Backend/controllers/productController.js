@@ -30,17 +30,61 @@ const addProduct = async (req, res) => {
  const getProducts = async (req,res) => {
   try {
     // pagination logic
-    const { offset = 0, limit = 10} = req.query;
+    const { offset = 0, limit = 10, category, priceRange,sortOption} = req.query;
     const maxLimit = 20;
-    console.log(limit);
     const effectiveOffset = Math.max(Number(offset),0);
     const effectiveLimit = Math.min(Number(limit),maxLimit); 
 
     const filter = req?.user?.isAdmin ? {} : { isActive: true };
-    
-    const products = await Product.find(filter).populate('category','categoryName -_id').skip(effectiveOffset).limit(effectiveLimit);
+
+    // category filter
+    if (category !== "All" && !req?.user?.isAdmin) {
+      filter.category = category;
+    }
+    // price filter
+    if (priceRange && priceRange !== "All" && !req?.user?.isAdmin) {
+      if (priceRange.startsWith("<")) {
+        // For < 100
+        const maxPrice = Number(priceRange.replace("<", "").trim());
+        filter['variants.0.price'] = { $lt: maxPrice };
+      } else if (priceRange.startsWith(">")) {
+        // For  > 1000
+        const minPrice = Number(priceRange.replace(">", "").trim());
+        filter['variants.0.price'] = { $gt: minPrice };
+      } else {
+        // For  100 to 500
+        const [minPrice, maxPrice] = priceRange.split(" to ").map(Number);
+        filter['variants.0.price'] = maxPrice
+          ? { $gte: minPrice, $lte: maxPrice }
+          : { $gte: minPrice };
+      }
+    }
+
+    // sorting 
+    let sortOptions = {};
+
+    if (sortOption) {
+      switch (sortOption) {
+        case "aA - zZ":
+          sortOptions = { productName: 1 }; // Ascending order of product name
+          break;
+        case "zZ - aA":
+          sortOptions = { productName: -1 }; // Descending order of product name
+          break;
+        case "price low to high":
+          sortOptions = { "variants.0.price": 1 }; // Ascending order of price
+          break;
+        case "price high to low":
+          sortOptions = { "variants.0.price": -1 }; // Descending order of price
+          break;
+        default:
+          break;
+      }
+    }
+
+    const products = await Product.find(filter).populate('category','categoryName -_id').skip(effectiveOffset).limit(effectiveLimit).sort(sortOptions);
     if(!products || products.length === 0)
-      return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus.NOT_FOUND,"No products were found"));
+      return res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"No products were found",[]));
 
     const updatedProducts = products.map((product) => {
       const imageUrls = product.gallery.map((image) => `${req.protocol}://${req.get("host")}/uploads/products/${image}`);
