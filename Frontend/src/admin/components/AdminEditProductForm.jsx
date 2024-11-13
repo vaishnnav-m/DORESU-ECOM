@@ -314,7 +314,7 @@ function EditProductForm() {
                   type="text"
                   name="stock"
                   onChange={(e) => handleChangeVariant(index, e)}
-                  value={variant.stock || ""}
+                  value={variant.stock}
                 />
                 {formError.stock && (
                   <span className="text-red-600">{formError.stock}</span>

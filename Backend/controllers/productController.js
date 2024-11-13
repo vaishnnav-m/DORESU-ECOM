@@ -4,16 +4,20 @@ const {HttpStatus,createResponse} = require("../utils/generateResponse");
 // controller to handle products adding
 const addProduct = async (req, res) => {
   const {productName,description,category,variants,} = req.body;
-  
+
    if (!req.user.isAdmin)
      return res.status(HttpStatus.UNAUTHORIZED).json(HttpStatus.FORBIDDEN,"You don't have permission");
    try {
+    const updatedVariants = variants.map(variant => ({
+      ...variant,
+      stock: variant.stock < 0 ? 0 : variant.stock
+    }));
      const imageUrls = req.files.map((file) => file.filename);
      const productData = new Product({
        productName,
        description,
        category,
-       variants,
+       variants:updatedVariants,
        gallery: imageUrls,
      });
  
@@ -30,7 +34,7 @@ const addProduct = async (req, res) => {
  const getProducts = async (req,res) => {
   try {
     // pagination logic
-    const { offset = 0, limit = 10, category, priceRange,sortOption} = req.query;
+    const { offset = 0, limit = 10, category = 'All', priceRange = 'All',sortOption = ''} = req.query;
     const maxLimit = 20;
     const effectiveOffset = Math.max(Number(offset),0);
     const effectiveLimit = Math.min(Number(limit),maxLimit); 
@@ -66,16 +70,16 @@ const addProduct = async (req, res) => {
     if (sortOption) {
       switch (sortOption) {
         case "aA - zZ":
-          sortOptions = { productName: 1 }; // Ascending order of product name
+          sortOptions = { productName: 1 }; 
           break;
         case "zZ - aA":
-          sortOptions = { productName: -1 }; // Descending order of product name
+          sortOptions = { productName: -1 }; 
           break;
         case "price low to high":
-          sortOptions = { "variants.0.price": 1 }; // Ascending order of price
+          sortOptions = { "variants.0.price": 1 }; 
           break;
         case "price high to low":
-          sortOptions = { "variants.0.price": -1 }; // Descending order of price
+          sortOptions = { "variants.0.price": -1 };
           break;
         default:
           break;
@@ -149,13 +153,18 @@ const addProduct = async (req, res) => {
     if(!productData)
       return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus,"Product not found"));
 
+    const updatedVariants = variants.map(variant => ({
+      ...variant,
+      stock: variant.stock < 0 ? 0 : variant.stock
+    }));
+
     const imageUrls = req.files && req.files.length > 0 ?  req.files.map((file) => file.filename) : productData.gallery;
 
     await Product.findByIdAndUpdate(productId,{
       productName,
       description,
       category,
-      variants,
+      variants:updatedVariants,
       gallery:imageUrls
     });
 

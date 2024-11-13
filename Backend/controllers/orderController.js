@@ -109,8 +109,36 @@ const updateOrderStatus = async (req,res) => {
    }
 }
 
+const getOneOrder = async (req,res) => {
+   try {
+      const {orderId} = req.params;
+
+      const orderData = await Order.findById(orderId).populate('items.productId').lean();
+      if(!orderData)
+         return res.status(HttpStatus.NOT_FOUND).json(createResponse(HttpStatus,"Order details not found"));
+
+      const updatedOrderData = {
+         ...orderData,
+          items:orderData.items.map((item) => {
+           const imageUrls = item.productId.gallery.map((image) => `${req.protocol}://${req.get("host")}/uploads/products/${image}`);
+           return {
+              ...item,
+              gallery:imageUrls
+           }
+        })
+      }
+      
+      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, "Order details retrieved",updatedOrderData));
+      
+   } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
+   }
+}
+
 module.exports = {
    placeOrder,
    getOrderhistories,
-   updateOrderStatus
+   updateOrderStatus,
+   getOneOrder
 }

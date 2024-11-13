@@ -24,12 +24,6 @@ function Products({ filters, sortOption}) {
     if (isLoading || ! currentHasMore) return;
     try {
       setIsLoading(true);
-      console.log("Fetching products with:", {
-        offset: offsetValue,
-        limit,
-        category: filters.categories,
-        priceRange: filters.priceRange,
-      }); 
       const response = await getProuducts({
         offset: offsetValue,
         limit,

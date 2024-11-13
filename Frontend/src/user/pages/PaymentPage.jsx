@@ -7,7 +7,7 @@ import {
 } from "../../services/userProductsApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import CheckoutAddress from "../components/CheckoutAddress";
 
 function PaymentPage() {
   const { data } = useGetAddressesQuery();
@@ -17,6 +17,7 @@ function PaymentPage() {
   const [products, setProducts] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,6 +34,8 @@ function PaymentPage() {
     }
   }, [data, cart]);
 
+  console.log(selectedAddress);
+
   async function handleOrder() {
     try {
       const response = await placeOrder({
@@ -42,12 +45,12 @@ function PaymentPage() {
         totalPrice: cart.data.totalPrice,
         totalQuantity: cart.data.totalQuantity,
       }).unwrap();
-      if(response){
+      if (response) {
         toast.success(response.message, {
           position: "top-right",
           theme: "dark",
         });
-        navigate('/success')
+        navigate("/success");
       }
     } catch (error) {
       console.log(error);
@@ -81,7 +84,7 @@ function PaymentPage() {
                               {product.productId.productName}
                             </span>
                             <span className="pl-[8px] font-semibold text-[20px] cursor-pointer">
-                            ₹ {product.price}
+                              ₹ {product.price}
                             </span>
                           </div>
                         </div>
@@ -128,7 +131,10 @@ function PaymentPage() {
                   </div>
                 ))}
 
-              <button className="font-semibold">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="font-semibold"
+              >
                 <i className="fas fa-plus" />
                 Add a new adress
               </button>
@@ -246,6 +252,13 @@ function PaymentPage() {
             </button>
           </div>
         </div>
+        {isModalOpen && (
+          <CheckoutAddress
+            closeModal={() => setIsModalOpen(false)}
+            address={selectedAddress}
+            setAddress={(address) => setSelectedAddress(address)}
+          />
+        )}
       </main>
     </div>
   );

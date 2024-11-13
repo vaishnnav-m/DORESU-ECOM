@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetCartQuery, useRemoveCartProductMutation, useUpdateCartMutation } from "../../services/userProductsApi";
+import { ToastContainer } from "react-toastify";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -158,6 +159,7 @@ function CartPage() {
           </button>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

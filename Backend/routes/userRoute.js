@@ -56,4 +56,8 @@ user_route.post('/placeOrder',verifyToken,orderController.placeOrder);
 
 user_route.get('/getUserOrderHistories',verifyToken,orderController.getOrderhistories);
 
+user_route.get('/getOneOrder/:orderId',verifyToken,orderController.getOneOrder);
+
+user_route.patch('/cancelOrder',verifyToken,orderController.updateOrderStatus)
+
 module.exports = user_route;

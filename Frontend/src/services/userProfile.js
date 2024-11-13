@@ -75,6 +75,18 @@ export const userProfileApi = api.injectEndpoints({
         url:'/api/getUserOrderHistories'
       }),
     }),
+    getOneOrder:builder.query({
+      query:(orderId) => ({
+        url:`/api/getOneOrder/${orderId}`
+      }),
+    }),
+    cancelOrder:builder.mutation({
+      query:(credentials) =>({
+        url:'/api/cancelOrder',
+        method:'PATCH',
+        body:credentials
+      })
+    })
   }),
   overrideExisting: false,
 });
@@ -89,5 +101,7 @@ export const {
   useGetOneAddressQuery,
   useUpdateAddressMutation,
   useDeleteAddressMutation,
-  useGetUserOrderHistoriesQuery
+  useGetUserOrderHistoriesQuery,
+  useGetOneOrderQuery,
+  useCancelOrderMutation
 } = userProfileApi;
