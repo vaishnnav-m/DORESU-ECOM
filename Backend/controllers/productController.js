@@ -172,10 +172,8 @@ const addProduct = async (req, res) => {
 
     
   } catch (error) {
-
     console.log(error);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
-    
   }
  }
 

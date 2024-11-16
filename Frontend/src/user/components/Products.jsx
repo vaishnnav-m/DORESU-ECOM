@@ -1,27 +1,39 @@
 import stars from "../assets/stars.svg";
 import cart from "../assets/Shopping cart.svg";
-import { useLazyGetProuductsQuery } from "../../services/userProductsApi";
+import {
+  useAddWishListMutation,
+  useGetWishListQuery,
+  useLazyGetProuductsQuery,
+} from "../../services/userProductsApi";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
-function Products({ filters, sortOption}) {
+
+function Products({ filters, sortOption, productLimit, load }) {
   // states
-  const limit = 8;
+  const limit = productLimit || 8;
   const [hasMore, setHasMore] = useState(true);
   const [products, setProducts] = useState([]);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [wishList, setWishList] = useState(null);
 
   // query to fetch products
   const [getProuducts, { isSuccess: isProductsSuccess }] =
     useLazyGetProuductsQuery();
+  const [addWishList] = useAddWishListMutation();
+  const { data: wishListData,refetch } = useGetWishListQuery();
 
   // reference to know end
   const endRef = useRef(null);
   const offset = useRef(0);
 
-  async function fetchProducts(offsetValue = offset.current,  currentHasMore = hasMore) {
-    if (isLoading || ! currentHasMore) return;
+  async function fetchProducts(
+    offsetValue = offset.current,
+    currentHasMore = hasMore
+  ) {
+    if (isLoading || !currentHasMore) return;
     try {
       setIsLoading(true);
       const response = await getProuducts({
@@ -29,7 +41,7 @@ function Products({ filters, sortOption}) {
         limit,
         category: filters.categories,
         priceRange: filters.priceRange,
-        sortOption
+        sortOption,
       }).unwrap();
 
       if (response) {
@@ -54,10 +66,10 @@ function Products({ filters, sortOption}) {
   useEffect(() => {
     setProducts([]);
     offset.current = 0;
-    setHasMore(true); 
+    setHasMore(true);
     setIsIntersecting(false);
-    fetchProducts(offset.current,true);
-  }, [filters,sortOption]);
+    fetchProducts(offset.current, true);
+  }, [filters, sortOption]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -75,10 +87,34 @@ function Products({ filters, sortOption}) {
   }, [endRef]);
 
   useEffect(() => {
-    if (isIntersecting && hasMore) {
+    if (isIntersecting && hasMore && load) {
       fetchProducts(offset.current);
     }
   }, [isIntersecting]);
+
+  // wish list area
+  async function handleWishList(productId) {
+    try {
+      const response = await addWishList({ productId }).unwrap();
+      if (response) {
+        toast.success(response.message, {
+          position: "top-right",
+          theme: "dark",
+        });
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.data.message, {
+        position: "top-right",
+        theme: "dark",
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (wishListData) setWishList(wishListData.data);
+  }, [wishListData]);
+
 
   return (
     <div className="w-full">
@@ -114,7 +150,20 @@ function Products({ filters, sortOption}) {
                       <img src={stars} alt="" />
                       <div className="flex gap-4">
                         <img src={cart} alt="" />
-                        <i className="fa-regular fa-heart "></i>
+                        <i
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleWishList(product._id);
+                          }}
+                          className={`fa-${
+                            wishList &&
+                            wishList.some(
+                              (val) => val.productId === product._id
+                            )
+                              ? "solid"
+                              : "regular"
+                          } fa-heart `}
+                        ></i>
                       </div>
                     </div>
                   </div>

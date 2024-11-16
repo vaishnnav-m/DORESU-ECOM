@@ -152,7 +152,7 @@ function AllProducts() {
           </form>
         </div>
         <div className="max-w-[70%]">
-          <Products filters={filters} sortOption={sortOption} />
+          <Products filters={filters} sortOption={sortOption} load={true} />
         </div>
       </main>
     </>

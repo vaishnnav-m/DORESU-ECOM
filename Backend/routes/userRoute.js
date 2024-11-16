@@ -7,6 +7,7 @@ const googleAuthController = require('../controllers/googleAuthController');
 const addressController = require('../controllers/addressController');
 const cartController = require('../controllers/cartController');
 const orderController = require('../controllers/orderController');
+const wishListController = require('../controllers/wishListController');
 
 user_route.post('/signup',userController.postSignup);
 
@@ -58,6 +59,10 @@ user_route.get('/getUserOrderHistories',verifyToken,orderController.getOrderhist
 
 user_route.get('/getOneOrder/:orderId',verifyToken,orderController.getOneOrder);
 
-user_route.patch('/cancelOrder',verifyToken,orderController.updateOrderStatus)
+user_route.patch('/cancelOrder',verifyToken,orderController.updateOrderStatus);
+
+user_route.post('/wishList/add',verifyToken,wishListController.addWishList);
+
+user_route.get('/wishList/get',verifyToken,wishListController.getWishList);
 
 module.exports = user_route;

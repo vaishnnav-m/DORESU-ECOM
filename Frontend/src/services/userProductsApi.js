@@ -46,7 +46,20 @@ export const userProductsApi = api.injectEndpoints({
         method:"POST",
         body:credentials
       })
-    })
+    }),
+    addWishList:builder.mutation({
+      query:(credentials) => ({
+        url:'/api/wishList/add',
+        method:'POST',
+        body:credentials
+      })
+    }),
+    getWishList: builder.query({
+      query: () => ({
+        url: "/api/wishList/get",
+      }),
+    }),
+
   }),
   overrideExisting: false,
 });
@@ -58,5 +71,7 @@ export const {
   useGetCartQuery,
   useUpdateCartMutation,
   useRemoveCartProductMutation,
-  usePlaceOrderMutation
+  usePlaceOrderMutation,
+  useAddWishListMutation,
+  useGetWishListQuery
 } = userProductsApi;

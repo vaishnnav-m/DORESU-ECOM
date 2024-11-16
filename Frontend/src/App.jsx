@@ -32,6 +32,7 @@ import PaymentPage from "./user/pages/PaymentPage";
 import OrderSuccess from "./user/pages/OrderSuccess";
 import UserOrders from "./user/pages/UserOrders";
 import UserOrderDetails from "./user/pages/UserOrderDetails";
+import WishList from "./user/pages/WishList";
 
 function App() {
   return (
@@ -80,6 +81,15 @@ function App() {
             element={
               <ProtectedRoutes>
                 <CartPage />
+              </ProtectedRoutes>
+            }
+          />
+          {/* user wishlist page */}
+          <Route
+            path="/wishList"
+            element={
+              <ProtectedRoutes>
+                <WishList />
               </ProtectedRoutes>
             }
           />

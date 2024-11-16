@@ -91,6 +91,11 @@ function Header() {
               </ul>
             </li>
             <li className="hover:scale-110">
+              <Link to="/wishList">
+                <i className="fas fa-heart text-[22px] text-black"/>
+              </Link>
+            </li>
+            <li className="hover:scale-110">
               <Link to="/cart">
                 <img className="w-[25px]" src={Cart} alt="" />
               </Link>
