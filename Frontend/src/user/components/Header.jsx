@@ -103,12 +103,6 @@ function Header() {
           </ul>
         </div>
       </nav>
-      {/* <div className={`${message?"opacity-100 pointer-events-auto":"opacity-0 pointer-events-none"} z-10 w-[500px] h-[90px] flex px-5 justify-between items-center text-[22px] text-[#809779] font-bold border-[#a9d999] bg-[#dcf3d5]} border-[2px] rounded-md absolute right-5 -bottom-1/2 translate-y-1/2`}>
-        <span>
-          <i className="fa-solid fa-circle-check mr-2 text-[24px]"></i> Success: {message}
-        </span>
-        <i className="fa-solid fa-x text-[22px] cursor-pointer"></i>
-      </div> */}
     </header>
   );
 }

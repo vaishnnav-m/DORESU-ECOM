@@ -2,11 +2,34 @@ const Order = require('../models/orderSchema');
 const Cart = require('../models/cartSchema');
 const Product = require('../models/productsSchema');
 const {HttpStatus,createResponse} = require("../utils/generateResponse");
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 
 const placeOrder = async (req,res) => {
    try {
       const userId = req.user.id;
-      const { address, items, totalPrice, totalQuantity } = req.body;
+      const { address, items, totalPrice, totalQuantity, paymentMethod } = req.body;
+
+      let razorpayOrderId = null;    
+      if(paymentMethod === 'online'){
+         const razorpay = new Razorpay({
+            key_id:process.env.RAZORPAY_KEY_ID,
+            key_secret:process.env.RAZORPAY_SECRET
+         });
+
+         const options = {
+            amount:totalPrice * 100,
+            currency:"INR",
+            receipt: `receipt_${Date.now()}`,
+         }
+
+         const order = await razorpay.orders.create(options);
+         if(!order)
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+         createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Failed to create Razorpay order. Please try again."));
+         razorpayOrderId = order.id;
+      }
+
    
       const newOrder = new Order({
          userId,
@@ -30,10 +53,16 @@ const placeOrder = async (req,res) => {
          },
          totalPrice,
          totalQuantity,
-         paymentMethod:'COD'
+         paymentMethod:paymentMethod,
+         paymentStatus:"pending",
+         razorpayOrderId: paymentMethod === "online" ? razorpayOrderId : null
       });
    
       await newOrder.save();
+
+      if(paymentMethod === "online"){
+         return res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK,"Order created successfully",{razorpayOrderId}))
+      }
 
       const stockUpdate = items.map((item) => ({
          updateOne:{
@@ -47,6 +76,51 @@ const placeOrder = async (req,res) => {
       await Cart.updateOne({userId},{ $set: { products: [], totalPrice: 0, totalQuantity: 0 } });
    
       res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, 'Order created successfully'));
+   } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
+   }
+}
+
+const verifyPayment = async (req,res) => {
+   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+   console.log("verify payment",razorpay_order_id);
+   try {
+      const sha = crypto.createHmac('sha256',process.env.RAZORPAY_SECRET);
+      sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+      const digest = sha.digest('hex');
+
+      if(digest !== razorpay_signature){
+         return res.status(HttpStatus.BAD_REQUEST).json(createResponse(HttpStatus.BAD_REQUEST,"Payment verification Failed"));
+      }
+
+      const order = await Order.findOneAndUpdate(
+         {razorpayOrderId: razorpay_order_id },
+         {
+            $set:{
+               paymentStatus:"Paid",
+               razorpayPaymentId:razorpay_payment_id
+            },
+         },
+      );
+
+      const stockUpdate = order.items.map((item) => ({
+         updateOne: {
+           filter: { _id: item.productId, "variants.size": item.size },
+           update: { $inc: { "variants.$.stock": -item.quantity } },
+         },
+       }));
+   
+       await Product.bulkWrite(stockUpdate);
+   
+       // Clear cart
+       await Cart.updateOne(
+         { userId: order.userId },
+         { $set: { products: [], totalPrice: 0, totalQuantity: 0 } }
+       );
+
+      res.status(HttpStatus.OK).json(createResponse(HttpStatus.OK, 'Payment verification completed successfully'));
+      
    } catch (error) {
       console.log(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Internal Server Error"));
@@ -140,5 +214,6 @@ module.exports = {
    placeOrder,
    getOrderhistories,
    updateOrderStatus,
-   getOneOrder
+   getOneOrder,
+   verifyPayment
 }

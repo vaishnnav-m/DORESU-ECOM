@@ -4,14 +4,17 @@ import { useGetAddressesQuery } from "../../services/userProfile";
 import {
   useGetCartQuery,
   usePlaceOrderMutation,
+  useVerifyOrderMutation,
 } from "../../services/userProductsApi";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import CheckoutAddress from "../components/CheckoutAddress";
 
 function PaymentPage() {
   const { data } = useGetAddressesQuery();
-  const { data: cart, isSuccess } = useGetCartQuery();
+  const { data: cart } = useGetCartQuery();
+  const [verifyOrder] = useVerifyOrderMutation();
+
   const [placeOrder] = usePlaceOrderMutation();
   const [addresses, setAddresses] = useState([]);
   const [products, setProducts] = useState([]);
@@ -34,10 +37,14 @@ function PaymentPage() {
     }
   }, [data, cart]);
 
-  console.log(selectedAddress);
-
   async function handleOrder() {
     try {
+      if (!paymentMethod)
+        return toast.error("Payment Method is Required", {
+          position: "top-right",
+          theme: "dark",
+        });
+
       const response = await placeOrder({
         address: selectedAddress,
         items: products,
@@ -46,11 +53,50 @@ function PaymentPage() {
         totalQuantity: cart.data.totalQuantity,
       }).unwrap();
       if (response) {
-        toast.success(response.message, {
-          position: "top-right",
-          theme: "dark",
-        });
-        navigate("/success");
+        if (paymentMethod === "online") {
+          const { razorpayOrderId } = response.data;
+          const options = {
+            key: "rzp_test_fbT8KO8CYacXGs",
+            amount: cart.data.totalPrice * 100,
+            currency: "INR",
+            name: "Your Store Name",
+            description: "Order Payment",
+            order_id: razorpayOrderId,
+            handler: async (paymentResponse) => {
+              // to verify payment
+              try {
+                console.log("payment response ",paymentResponse);
+                const response = await verifyOrder({
+                  razorpay_order_id: paymentResponse.razorpay_order_id,
+                  razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                  razorpay_signature: paymentResponse.razorpay_signature,
+                }).unwrap();
+
+                if (response) {
+                  navigate("/success");
+                }
+              } catch (error) {
+                console.log("Payment Verification Failed", error);
+                toast.error("Payment Verification Failed", {
+                  position: "top-right",
+                  theme: "dark",
+                });
+              }
+            },
+            prefill: {
+              name: "Customer Name",
+              email: "customer@example.com",
+              contact: "9999999999",
+            },
+            theme: {
+              color: "#3399cc",
+            },
+          };
+          const rzp = new Razorpay(options);
+          rzp.open();
+        } else {
+          navigate("/success");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -152,23 +198,23 @@ function PaymentPage() {
                   <input
                     type="radio"
                     name="paymentMethod"
-                    onChange={() => setPaymentMethod("Card")}
+                    onChange={() => setPaymentMethod("wallet")}
                   />
-                  Card
+                  Wallet
                 </div>
                 <div className="px-5 py-2 flex gap-5 font-semibold">
                   <input
                     type="radio"
                     name="paymentMethod"
-                    onChange={() => setPaymentMethod("UPI")}
+                    onChange={() => setPaymentMethod("online")}
                   />
-                  UPI
+                  Online Payment
                 </div>
                 <div className="px-5 py-2 flex gap-5 font-semibold">
                   <input
                     type="radio"
                     name="paymentMethod"
-                    onChange={() => setPaymentMethod("Cash On Delivery")}
+                    onChange={() => setPaymentMethod("COD")}
                   />
                   Cash On Delivery
                 </div>
@@ -260,6 +306,7 @@ function PaymentPage() {
           />
         )}
       </main>
+      <ToastContainer />
     </div>
   );
 }

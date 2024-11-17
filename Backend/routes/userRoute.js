@@ -55,6 +55,8 @@ user_route.delete('/removeCartProduct',verifyToken,cartController.removePrdctCar
 
 user_route.post('/placeOrder',verifyToken,orderController.placeOrder);
 
+user_route.post('/verifyOrder',verifyToken,orderController.verifyPayment);
+
 user_route.get('/getUserOrderHistories',verifyToken,orderController.getOrderhistories);
 
 user_route.get('/getOneOrder/:orderId',verifyToken,orderController.getOneOrder);

@@ -47,6 +47,13 @@ export const userProductsApi = api.injectEndpoints({
         body:credentials
       })
     }),
+    verifyOrder:builder.mutation({
+      query:(credentials) => ({
+        url:'/api/verifyOrder',
+        method:'POST',
+        body:credentials
+      }),
+    }),
     addWishList:builder.mutation({
       query:(credentials) => ({
         url:'/api/wishList/add',
@@ -72,6 +79,7 @@ export const {
   useUpdateCartMutation,
   useRemoveCartProductMutation,
   usePlaceOrderMutation,
+  useVerifyOrderMutation,
   useAddWishListMutation,
   useGetWishListQuery
 } = userProductsApi;
